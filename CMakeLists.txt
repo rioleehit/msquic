@@ -13,7 +13,7 @@ endif()
 
 message(STATUS "CMAKE Version: ${CMAKE_VERSION}")
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
 
 message(STATUS "Source Dir: ${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "Host System name: ${CMAKE_HOST_SYSTEM_NAME}")
@@ -49,6 +49,8 @@ message(STATUS "System name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "System version: ${CMAKE_SYSTEM_VERSION}")
 message(STATUS "Platform version: ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+option(QUIC_PLATFORM_ANDROID "Builds the tools code" OFF)
 
 if (WIN32)
     set(CX_PLATFORM "windows")
@@ -111,15 +113,15 @@ enable_testing()
 #endif()
 
 option(QUIC_BUILD_TOOLS "Builds the tools code" ON)
-option(QUIC_BUILD_TEST "Builds the test code" ON)
+option(QUIC_BUILD_TEST "Builds the test code" OFF)
 option(QUIC_BUILD_PERF "Builds the perf code" ON)
 option(QUIC_ENABLE_LOGGING "Enables logging" OFF)
 option(QUIC_ENABLE_SANITIZERS "Enables sanitizers" OFF)
 option(QUIC_STATIC_LINK_CRT "Statically links the C runtime" ON)
 option(QUIC_UWP_BUILD "Build for UWP" OFF)
 option(QUIC_PGO "Enables profile guided optimizations" OFF)
-option(QUIC_SOURCE_LINK "Enables source linking on MSVC" ON)
-option(QUIC_PDBALTPATH "Enable PDBALTPATH setting on MSVC" ON)
+option(QUIC_SOURCE_LINK "Enables source linking on MSVC" OFF)
+option(QUIC_PDBALTPATH "Enable PDBALTPATH setting on MSVC" OFF)
 option(QUIC_CODE_CHECK "Run static code checkers" OFF)
 option(QUIC_OPTIMIZE_LOCAL "Optimize code for local machine architecture" OFF)
 option(QUIC_CI "CI Specific build optimizations" OFF)
@@ -457,7 +459,10 @@ if(QUIC_TLS STREQUAL "openssl")
         if (QUIC_ENABLE_SANITIZERS)
             list(APPEND OPENSSL_CONFIG_FLAGS enable-asan enable-ubsan)
         endif()
-        if(CMAKE_SYSTEM_PROCESSOR STREQUAL arm)
+        if(QUIC_PLATFORM_ANDROID)
+            set(OPENSSL_CONFIG_CMD ${CMAKE_CURRENT_SOURCE_DIR}/submodules/openssl/Configure
+                android-arm64 -DL_ENDIAN -D__ANDROID_API__=28 -DOPENSSL_NO_STDIO)
+        elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL arm)
             set(OPENSSL_CONFIG_CMD ${CMAKE_CURRENT_SOURCE_DIR}/submodules/openssl/Configure
                 linux-armv4 -DL_ENDIAN
                 --cross-compile-prefix=${GNU_MACHINE}${FLOAT_ABI_SUFFIX}-)
@@ -478,15 +483,17 @@ if(QUIC_TLS STREQUAL "openssl")
         endif()
         add_custom_target(mkdir_openssl_build
             COMMAND mkdir -p ${QUIC_BUILD_DIR}/submodules/openssl)
+
         add_custom_command(
-            DEPENDS mkdir_openssl_build
-            WORKING_DIRECTORY ${QUIC_BUILD_DIR}/submodules/openssl
-            OUTPUT ${OPENSSL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}
-            OUTPUT ${OPENSSL_DIR}/lib/libssl${CMAKE_STATIC_LIBRARY_SUFFIX}
-            COMMAND SYSTEM=${CMAKE_HOST_SYSTEM_NAME}
-                ${OPENSSL_CONFIG_CMD} ${OPENSSL_CONFIG_FLAGS}
-            COMMAND make -j$$(nproc)
-            COMMAND make install_dev)
+                DEPENDS mkdir_openssl_build
+                COMMAND cd ${QUIC_BUILD_DIR}/submodules/openssl
+                OUTPUT ${OPENSSL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}
+                OUTPUT ${OPENSSL_DIR}/lib/libssl${CMAKE_STATIC_LIBRARY_SUFFIX}
+                COMMAND SYSTEM=${CMAKE_HOST_SYSTEM_NAME}
+                COMMAND ${OPENSSL_CONFIG_CMD} ${OPENSSL_CONFIG_FLAGS}
+                COMMAND make -j$$(nproc)
+                COMMAND make install_dev
+        )
         add_custom_target(OpenSSL_Build
             DEPENDS ${OPENSSL_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}
             DEPENDS ${OPENSSL_DIR}/lib/libssl${CMAKE_STATIC_LIBRARY_SUFFIX})

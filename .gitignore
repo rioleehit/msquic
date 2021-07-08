@@ -367,3 +367,5 @@ FodyWeavers.xsd
 
 # PGO Local Test Copy
 artifacts_server/
+android-ndk-r21e/
+android-ndk-r21e-linux-x86_64.zip

@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -37,7 +37,7 @@ typedef struct QUIC_CONNECTION QUIC_CONNECTION;
 #define STREAM_ID_IS_UNI_DIR(ID)        ((ID & 2) == 2)
 
 #define QUIC_STREAM_SHUTDOWN_SILENT         0x8000  // Used in conjunction with the abort flags.
-                                                    // Doesn't send anything out on the network.
+// Doesn't send anything out on the network.
 
 #define QUIC_STREAM_EVENT_RECEIVE_TLS_INIT     0xff    // Private event for server receive ClientHello.
 
@@ -54,7 +54,8 @@ typedef struct QUIC_CONNECTION QUIC_CONNECTION;
 //
 // Tracks the data queued up for sending by an application.
 //
-typedef struct QUIC_SEND_REQUEST {
+typedef struct QUIC_SEND_REQUEST
+{
 
     //
     // The pointer to the next item in the list.
@@ -103,9 +104,11 @@ typedef struct QUIC_SEND_REQUEST {
 // Different flags of a stream.
 // Note - Keep quictypes.h's copy up to date.
 //
-typedef union QUIC_STREAM_FLAGS {
+typedef union QUIC_STREAM_FLAGS
+{
     uint32_t AllFlags;
-    struct {
+    struct
+    {
         BOOLEAN Allocated               : 1;    // Allocated by Connection. Used for Debugging.
         BOOLEAN Initialized             : 1;    // Initialized successfully. Used for Debugging.
         BOOLEAN Started                 : 1;    // The app has started the stream.
@@ -122,7 +125,7 @@ typedef union QUIC_STREAM_FLAGS {
         BOOLEAN LocalCloseAcked         : 1;    // Any close acknowledged.
         BOOLEAN FinAcked                : 1;    // Our FIN was acknowledged.
         BOOLEAN InRecovery              : 1;    // Lost data is being retransmitted and is
-                                                // unacknowledged.
+        // unacknowledged.
 
         BOOLEAN RemoteNotAllowed        : 1;    // Our unidirectional stream.
         BOOLEAN RemoteCloseFin          : 1;    // Remotely closed.
@@ -147,7 +150,8 @@ typedef union QUIC_STREAM_FLAGS {
     };
 } QUIC_STREAM_FLAGS;
 
-typedef enum QUIC_STREAM_SEND_STATE {
+typedef enum QUIC_STREAM_SEND_STATE
+{
     QUIC_STREAM_SEND_DISABLED,
     QUIC_STREAM_SEND_STARTED,
     QUIC_STREAM_SEND_RESET,
@@ -156,7 +160,8 @@ typedef enum QUIC_STREAM_SEND_STATE {
     QUIC_STREAM_SEND_FIN_ACKED
 } QUIC_STREAM_SEND_STATE;
 
-typedef enum QUIC_STREAM_RECV_STATE {
+typedef enum QUIC_STREAM_RECV_STATE
+{
     QUIC_STREAM_RECV_DISABLED,
     QUIC_STREAM_RECV_STARTED,
     QUIC_STREAM_RECV_PAUSED,
@@ -168,7 +173,8 @@ typedef enum QUIC_STREAM_RECV_STATE {
 //
 // Different references on a stream.
 //
-typedef enum QUIC_STREAM_REF {
+typedef enum QUIC_STREAM_REF
+{
 
     QUIC_STREAM_REF_APP,
     QUIC_STREAM_REF_STREAM_SET,
@@ -184,9 +190,10 @@ typedef enum QUIC_STREAM_REF {
 //
 // This structure represents all the per connection specific data.
 //
-typedef struct QUIC_STREAM {
-
-    struct QUIC_HANDLE;
+typedef struct QUIC_STREAM
+{
+    //struct QUIC_HANDLE;
+    STRUCT_QUIC_HANDLE;
 
     //
     // Number of references to the handle.
@@ -197,7 +204,8 @@ typedef struct QUIC_STREAM {
     short RefTypeCount[QUIC_STREAM_REF_COUNT];
 #endif
 
-    union {
+    union
+    {
         //
         // The entry in the connection's hashtable of streams.
         //
@@ -328,7 +336,7 @@ typedef struct QUIC_STREAM {
     //
     uint64_t RecoveryNextOffset;
     uint64_t RecoveryEndOffset;
-    #define RECOV_WINDOW_OPEN(S) ((S)->RecoveryNextOffset < (S)->RecoveryEndOffset)
+#define RECOV_WINDOW_OPEN(S) ((S)->RecoveryNextOffset < (S)->RecoveryEndOffset)
 
     //
     // The ACK ranges greater than 'UnAckedOffset', with holes between them.
@@ -387,21 +395,33 @@ inline
 QUIC_STREAM_SEND_STATE
 QuicStreamSendGetState(
     _In_ const QUIC_STREAM* Stream
-    )
+)
 {
-    if (Stream->Flags.LocalNotAllowed) {
+    if (Stream->Flags.LocalNotAllowed)
+    {
         return QUIC_STREAM_SEND_DISABLED;
-    } else if (Stream->Flags.LocalCloseAcked) {
-        if (Stream->Flags.FinAcked) {
+    }
+    else if (Stream->Flags.LocalCloseAcked)
+    {
+        if (Stream->Flags.FinAcked)
+        {
             return QUIC_STREAM_SEND_FIN_ACKED;
-        } else {
+        }
+        else
+        {
             return QUIC_STREAM_SEND_RESET_ACKED;
         }
-    } else if (Stream->Flags.LocalCloseReset) {
+    }
+    else if (Stream->Flags.LocalCloseReset)
+    {
         return QUIC_STREAM_SEND_RESET;
-    } else if (Stream->Flags.LocalCloseFin) {
+    }
+    else if (Stream->Flags.LocalCloseFin)
+    {
         return QUIC_STREAM_SEND_FIN;
-    } else {
+    }
+    else
+    {
         return QUIC_STREAM_SEND_STARTED;
     }
 }
@@ -410,19 +430,30 @@ inline
 QUIC_STREAM_RECV_STATE
 QuicStreamRecvGetState(
     _In_ const QUIC_STREAM* Stream
-    )
+)
 {
-    if (Stream->Flags.RemoteNotAllowed) {
+    if (Stream->Flags.RemoteNotAllowed)
+    {
         return QUIC_STREAM_RECV_DISABLED;
-    } else if (Stream->Flags.RemoteCloseReset) {
+    }
+    else if (Stream->Flags.RemoteCloseReset)
+    {
         return QUIC_STREAM_RECV_RESET;
-    } else if (Stream->Flags.RemoteCloseFin) {
+    }
+    else if (Stream->Flags.RemoteCloseFin)
+    {
         return QUIC_STREAM_RECV_FIN;
-    } else if (Stream->Flags.SentStopSending) {
+    }
+    else if (Stream->Flags.SentStopSending)
+    {
         return QUIC_STREAM_RECV_STOPPED;
-    } else if (!Stream->Flags.ReceiveEnabled) {
+    }
+    else if (!Stream->Flags.ReceiveEnabled)
+    {
         return QUIC_STREAM_RECV_PAUSED;
-    } else {
+    }
+    else
+    {
         return QUIC_STREAM_RECV_STARTED;
     }
 }
@@ -434,7 +465,7 @@ BOOLEAN
 QuicStreamCanSendNow(
     _In_ const QUIC_STREAM* Stream,
     _In_ BOOLEAN ZeroRtt
-    );
+);
 
 inline
 uint64_t
@@ -442,20 +473,31 @@ QuicStreamGetInitialMaxDataFromTP(
     _In_ uint64_t StreamID,
     _In_ BOOLEAN IsServer,
     _In_ const QUIC_TRANSPORT_PARAMETERS* const TransportParams
-    )
+)
 {
-    if (STREAM_ID_IS_UNI_DIR(StreamID)) {
+    if (STREAM_ID_IS_UNI_DIR(StreamID))
+    {
         return TransportParams->InitialMaxStreamDataUni;
-    } else if (IsServer) {
-        if (STREAM_ID_IS_CLIENT(StreamID)) {
+    }
+    else if (IsServer)
+    {
+        if (STREAM_ID_IS_CLIENT(StreamID))
+        {
             return TransportParams->InitialMaxStreamDataBidiLocal;
-        } else {
+        }
+        else
+        {
             return TransportParams->InitialMaxStreamDataBidiRemote;
         }
-    } else {
-        if (STREAM_ID_IS_CLIENT(StreamID)) {
+    }
+    else
+    {
+        if (STREAM_ID_IS_CLIENT(StreamID))
+        {
             return TransportParams->InitialMaxStreamDataBidiRemote;
-        } else {
+        }
+        else
+        {
             return TransportParams->InitialMaxStreamDataBidiLocal;
         }
     }
@@ -472,8 +514,8 @@ QuicStreamInitialize(
     _In_ BOOLEAN Unidirectional,
     _In_ BOOLEAN Opened0Rtt,
     _Outptr_ _At_(*Stream, __drv_allocatesMem(Mem))
-        QUIC_STREAM** Stream
-    );
+    QUIC_STREAM** Stream
+);
 
 //
 // Free the stream object.
@@ -482,7 +524,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicStreamFree(
     _In_ __drv_freesMem(Mem) QUIC_STREAM* Stream
-    );
+);
 
 //
 // Associates a new ID with the stream and inserts it into the connection's
@@ -494,7 +536,7 @@ QuicStreamStart(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_STREAM_START_FLAGS Flags,
     _In_ BOOLEAN IsRemoteStream
-    );
+);
 
 //
 // Releases the application's reference on the stream.
@@ -503,7 +545,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamClose(
     _In_ __drv_freesMem(Mem) QUIC_STREAM* Stream
-    );
+);
 
 //
 // Tracing rundown for the stream set.
@@ -512,7 +554,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamTraceRundown(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Indicates an event to the application layer.
@@ -522,7 +564,7 @@ QUIC_STATUS
 QuicStreamIndicateEvent(
     _In_ QUIC_STREAM* Stream,
     _Inout_ QUIC_STREAM_EVENT* Event
-    );
+);
 
 //
 // Indicates the stream start complete event to the application layer.
@@ -532,7 +574,7 @@ void
 QuicStreamIndicateStartComplete(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_STATUS Status
-    );
+);
 
 //
 // Initiates an asychronous shutdown of one or both directions of the stream.
@@ -543,7 +585,7 @@ QuicStreamShutdown(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_STREAM_SHUTDOWN_FLAGS Flags,
     _In_ QUIC_VAR_INT ErrorCode
-    );
+);
 
 //
 // Marks the Stream as shutdown complete if both directions are closed and
@@ -552,7 +594,7 @@ QuicStreamShutdown(
 void
 QuicStreamTryCompleteShutdown(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Sets a stream parameter.
@@ -563,8 +605,8 @@ QuicStreamParamSet(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 //
 // Gets a stream parameter.
@@ -575,8 +617,8 @@ QuicStreamParamGet(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);
 
 //
 // Adds a ref to a stream.
@@ -587,7 +629,7 @@ void
 QuicStreamAddRef(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_STREAM_REF Ref
-    )
+)
 {
     CXPLAT_DBG_ASSERT(Stream->Connection);
     CXPLAT_DBG_ASSERT(Stream->RefCount > 0);
@@ -612,7 +654,7 @@ BOOLEAN
 QuicStreamRelease(
     _In_ __drv_freesMem(Mem) QUIC_STREAM* Stream,
     _In_ QUIC_STREAM_REF Ref
-    )
+)
 {
     CXPLAT_DBG_ASSERT(Stream->Connection);
     CXPLAT_TEL_ASSERT(Stream->RefCount > 0);
@@ -625,9 +667,11 @@ QuicStreamRelease(
     UNREFERENCED_PARAMETER(Ref);
 #endif
 
-    if (CxPlatRefDecrement(&Stream->RefCount)) {
+    if (CxPlatRefDecrement(&Stream->RefCount))
+    {
 #if DEBUG
-        for (uint32_t i = 0; i < QUIC_STREAM_REF_COUNT; i++) {
+        for (uint32_t i = 0; i < QUIC_STREAM_REF_COUNT; i++)
+        {
             CXPLAT_TEL_ASSERT(Stream->RefTypeCount[i] == 0);
         }
 #endif
@@ -647,9 +691,10 @@ BOOLEAN
 QuicStreamAddOutFlowBlockedReason(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_FLOW_BLOCK_REASON Reason
-    )
+)
 {
-    if (!(Stream->OutFlowBlockedReasons & Reason)) {
+    if (!(Stream->OutFlowBlockedReasons & Reason))
+    {
         Stream->OutFlowBlockedReasons |= Reason;
         QuicTraceEvent(
             StreamOutFlowBlocked,
@@ -666,9 +711,10 @@ BOOLEAN
 QuicStreamRemoveOutFlowBlockedReason(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_FLOW_BLOCK_REASON Reason
-    )
+)
 {
-    if ((Stream->OutFlowBlockedReasons & Reason)) {
+    if ((Stream->OutFlowBlockedReasons & Reason))
+    {
         Stream->OutFlowBlockedReasons &= ~Reason;
         QuicTraceEvent(
             StreamOutFlowBlocked,
@@ -691,7 +737,7 @@ QuicStreamSendShutdown(
     _In_ BOOLEAN Silent,
     _In_ BOOLEAN DelaySend,
     _In_ QUIC_VAR_INT ErrorCode   // Only for !Graceful
-    );
+);
 
 //
 // Send path has completed shutdown.
@@ -701,7 +747,7 @@ void
 QuicStreamIndicateSendShutdownComplete(
     _In_ QUIC_STREAM* Stream,
     _In_ BOOLEAN GracefulShutdown
-    );
+);
 
 //
 // Indicates data has been queued up to be sent out on the stream.
@@ -710,7 +756,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamSendFlush(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Copies the bytes of a send request and completes it early.
@@ -720,7 +766,7 @@ QUIC_STATUS
 QuicStreamSendBufferRequest(
     _Inout_ QUIC_STREAM* Stream,
     _Inout_ QUIC_SEND_REQUEST* Req
-    );
+);
 
 //
 // Called on a stream to allow it to write any frames it needs to the packet
@@ -732,7 +778,7 @@ BOOLEAN
 QuicStreamSendWrite(
     _In_ QUIC_STREAM* Stream,
     _Inout_ QUIC_PACKET_BUILDER* Builder
-    );
+);
 
 //
 // Called when a stream frame is inferred to be lost. Returns TRUE if data is
@@ -743,7 +789,7 @@ BOOLEAN
 QuicStreamOnLoss(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_SENT_FRAME_METADATA* FrameMetadata
-    );
+);
 
 //
 // Called when an ACK is received for a stream frame.
@@ -754,7 +800,7 @@ QuicStreamOnAck(
     _In_ QUIC_STREAM* Stream,
     _In_ QUIC_SEND_PACKET_FLAGS PacketFlags,
     _In_ QUIC_SENT_FRAME_METADATA* FrameMetadata
-    );
+);
 
 //
 // Called when an ACK is received for a RESET_STREAM frame we sent.
@@ -763,7 +809,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamOnResetAck(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Dumps send state to the logs.
@@ -772,7 +818,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamSendDumpState(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Receive Functions
@@ -787,7 +833,7 @@ QuicStreamRecvShutdown(
     _In_ QUIC_STREAM* Stream,
     _In_ BOOLEAN Silent,
     _In_ QUIC_VAR_INT ErrorCode
-    );
+);
 
 //
 // Completes a receive call that was pended by the app.
@@ -797,7 +843,7 @@ void
 QuicStreamReceiveCompletePending(
     _In_ QUIC_STREAM* Stream,
     _In_ uint64_t BufferLength
-    );
+);
 
 //
 // Processes a received frame for the given stream.
@@ -810,10 +856,10 @@ QuicStreamRecv(
     _In_ QUIC_FRAME_TYPE FrameType,
     _In_ uint16_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const uint8_t * const Buffer,
+    const uint8_t* const Buffer,
     _Inout_ uint16_t* Offset,
     _Inout_ BOOLEAN* UpdatedFlowControl
-    );
+);
 
 //
 // Processes queued events and delivers them to the API client.
@@ -822,7 +868,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicStreamRecvFlush(
     _In_ QUIC_STREAM* Stream
-    );
+);
 
 //
 // Enables or disables receive callbacks for the stream.
@@ -832,4 +878,4 @@ QUIC_STATUS
 QuicStreamRecvSetEnabledState(
     _In_ QUIC_STREAM* Stream,
     _In_ BOOLEAN NewRecvEnabled
-    );
+);

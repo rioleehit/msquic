@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -38,8 +38,8 @@ MsQuicConnectionOpen(
     _In_ _Pre_defensive_ QUIC_CONNECTION_CALLBACK_HANDLER Handler,
     _In_opt_ void* Context,
     _Outptr_ _At_(*NewConnection, __drv_allocatesMem(Mem)) _Pre_defensive_
-        HQUIC *NewConnection
-    )
+    HQUIC* NewConnection
+)
 {
     QUIC_STATUS Status;
     QUIC_REGISTRATION* Registration;
@@ -52,8 +52,9 @@ MsQuicConnectionOpen(
         RegistrationHandle);
 
     if (!IS_REGISTRATION_HANDLE(RegistrationHandle) ||
-        NewConnection == NULL ||
-        Handler == NULL) {
+            NewConnection == NULL ||
+            Handler == NULL)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -61,7 +62,8 @@ MsQuicConnectionOpen(
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
     Registration = (QUIC_REGISTRATION*)RegistrationHandle;
 
-    if ((Connection = QuicConnAlloc(Registration, NULL)) == NULL) {
+    if ((Connection = QuicConnAlloc(Registration, NULL)) == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         goto Error;
     }
@@ -91,8 +93,8 @@ void
 QUIC_API
 MsQuicConnectionClose(
     _In_ _Pre_defensive_ __drv_freesMem(Mem)
-        HQUIC Handle
-    )
+    HQUIC Handle
+)
 {
     QUIC_CONNECTION* Connection;
 
@@ -104,7 +106,8 @@ MsQuicConnectionClose(
         QUIC_TRACE_API_CONNECTION_CLOSE,
         Handle);
 
-    if (!IS_CONN_HANDLE(Handle)) {
+    if (!IS_CONN_HANDLE(Handle))
+    {
         goto Error;
     }
 
@@ -114,13 +117,16 @@ MsQuicConnectionClose(
     QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
         QuicConnCloseHandle(Connection);
 
-    } else {
+    }
+    else
+    {
 
         CXPLAT_EVENT CompletionEvent;
         QUIC_OPERATION Oper = { 0 };
@@ -172,7 +178,7 @@ MsQuicConnectionShutdown(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ QUIC_CONNECTION_SHUTDOWN_FLAGS Flags,
     _In_ _Pre_defensive_ QUIC_UINT62 ErrorCode
-    )
+)
 {
     QUIC_CONNECTION* Connection;
     QUIC_OPERATION* Oper;
@@ -183,33 +189,41 @@ MsQuicConnectionShutdown(
         QUIC_TRACE_API_CONNECTION_SHUTDOWN,
         Handle);
 
-    if (IS_CONN_HANDLE(Handle)) {
+    if (IS_CONN_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else if (IS_STREAM_HANDLE(Handle)) {
+    }
+    else if (IS_STREAM_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         QUIC_STREAM* Stream = (QUIC_STREAM*)Handle;
         CXPLAT_TEL_ASSERT(!Stream->Flags.HandleClosed);
         CXPLAT_TEL_ASSERT(!Stream->Flags.Freed);
         Connection = Stream->Connection;
-    } else {
+    }
+    else
+    {
         goto Error;
     }
 
-    if (ErrorCode > QUIC_UINT62_MAX) {
+    if (ErrorCode > QUIC_UINT62_MAX)
+    {
         QUIC_CONN_VERIFY(Connection, ErrorCode <= QUIC_UINT62_MAX);
         goto Error;
     }
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
     QUIC_CONN_VERIFY(Connection,
-        (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
-        !Connection->State.HandleClosed);
+                     (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
+                     !Connection->State.HandleClosed);
 
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         if (InterlockedCompareExchange16(
-                (short*)&Connection->BackUpOperUsed, 1, 0) != 0) {
+                    (short*)&Connection->BackUpOperUsed, 1, 0) != 0)
+        {
             goto Error; // It's already started the shutdown.
         }
         Oper = &Connection->BackUpOper;
@@ -241,9 +255,9 @@ MsQuicConnectionStart(
     _In_ _Pre_defensive_ HQUIC ConfigHandle,
     _In_ QUIC_ADDRESS_FAMILY Family,
     _In_reads_or_z_opt_(QUIC_MAX_SNI_LENGTH)
-        const char* ServerName,
+    const char* ServerName,
     _In_ uint16_t ServerPort // Host byte order
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_CONNECTION* Connection;
@@ -260,8 +274,9 @@ MsQuicConnectionStart(
         Handle);
 
     if (ConfigHandle == NULL ||
-        ConfigHandle->Type != QUIC_HANDLE_TYPE_CONFIGURATION ||
-        ServerPort == 0) {
+            ConfigHandle->Type != QUIC_HANDLE_TYPE_CONFIGURATION ||
+            ServerPort == 0)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -270,22 +285,28 @@ MsQuicConnectionStart(
     // Make sure the connection is to a IPv4 or IPv6 address or unspecified.
     //
     if (Family != QUIC_ADDRESS_FAMILY_UNSPEC &&
-        Family != QUIC_ADDRESS_FAMILY_INET &&
-        Family != QUIC_ADDRESS_FAMILY_INET6) {
+            Family != QUIC_ADDRESS_FAMILY_INET &&
+            Family != QUIC_ADDRESS_FAMILY_INET6)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (IS_CONN_HANDLE(Handle)) {
+    if (IS_CONN_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else if (IS_STREAM_HANDLE(Handle)) {
+    }
+    else if (IS_STREAM_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         QUIC_STREAM* Stream = (QUIC_STREAM*)Handle;
         CXPLAT_TEL_ASSERT(!Stream->Flags.HandleClosed);
         CXPLAT_TEL_ASSERT(!Stream->Flags.Freed);
         Connection = Stream->Connection;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -293,29 +314,34 @@ MsQuicConnectionStart(
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
     if (QuicConnIsServer(Connection) ||
-        (!Connection->State.RemoteAddressSet && ServerName == NULL)) {
+            (!Connection->State.RemoteAddressSet && ServerName == NULL))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (Connection->State.Started || Connection->State.ClosedLocally) {
+    if (Connection->State.Started || Connection->State.ClosedLocally)
+    {
         Status = QUIC_STATUS_INVALID_STATE; // TODO - Support the Connect after close/previous connect failure?
         goto Error;
     }
 
     Configuration = (QUIC_CONFIGURATION*)ConfigHandle;
 
-    if (Configuration->SecurityConfig == NULL) {
+    if (Configuration->SecurityConfig == NULL)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (ServerName != NULL) {
+    if (ServerName != NULL)
+    {
         //
         // Validate the server name length.
         //
         size_t ServerNameLength = strnlen(ServerName, QUIC_MAX_SNI_LENGTH + 1);
-        if (ServerNameLength == QUIC_MAX_SNI_LENGTH + 1) {
+        if (ServerNameLength == QUIC_MAX_SNI_LENGTH + 1)
+        {
             Status = QUIC_STATUS_INVALID_PARAMETER;
             goto Error;
         }
@@ -325,7 +351,8 @@ MsQuicConnectionStart(
         //
 #pragma prefast(suppress: __WARNING_6014, "Memory is correctly freed by the connection.")
         ServerNameCopy = CXPLAT_ALLOC_NONPAGED(ServerNameLength + 1, QUIC_POOL_SERVERNAME);
-        if (ServerNameCopy == NULL) {
+        if (ServerNameCopy == NULL)
+        {
             Status = QUIC_STATUS_OUT_OF_MEMORY;
             QuicTraceEvent(
                 AllocFailure,
@@ -342,7 +369,8 @@ MsQuicConnectionStart(
     QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
     CXPLAT_DBG_ASSERT(!QuicConnIsServer(Connection));
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -368,7 +396,8 @@ MsQuicConnectionStart(
 
 Error:
 
-    if (ServerNameCopy != NULL) {
+    if (ServerNameCopy != NULL)
+    {
         CXPLAT_FREE(ServerNameCopy, QUIC_POOL_SERVERNAME);
     }
 
@@ -386,7 +415,7 @@ QUIC_API
 MsQuicConnectionSetConfiguration(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ _Pre_defensive_ HQUIC ConfigHandle
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_CONNECTION* Connection;
@@ -402,40 +431,49 @@ MsQuicConnectionSetConfiguration(
         Handle);
 
     if (ConfigHandle == NULL ||
-        ConfigHandle->Type != QUIC_HANDLE_TYPE_CONFIGURATION) {
+            ConfigHandle->Type != QUIC_HANDLE_TYPE_CONFIGURATION)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (IS_CONN_HANDLE(Handle)) {
+    if (IS_CONN_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else if (IS_STREAM_HANDLE(Handle)) {
+    }
+    else if (IS_STREAM_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         QUIC_STREAM* Stream = (QUIC_STREAM*)Handle;
         CXPLAT_TEL_ASSERT(!Stream->Flags.HandleClosed);
         CXPLAT_TEL_ASSERT(!Stream->Flags.Freed);
         Connection = Stream->Connection;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (!QuicConnIsServer(Connection)) {
+    if (!QuicConnIsServer(Connection))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (Connection->Configuration != NULL) {
+    if (Connection->Configuration != NULL)
+    {
         Status = QUIC_STATUS_INVALID_STATE;
         goto Error;
     }
 
     Configuration = (QUIC_CONFIGURATION*)ConfigHandle;
 
-    if (Configuration->SecurityConfig == NULL) {
+    if (Configuration->SecurityConfig == NULL)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -443,7 +481,8 @@ MsQuicConnectionSetConfiguration(
     QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
     CXPLAT_DBG_ASSERT(QuicConnIsServer(Connection));
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -481,8 +520,8 @@ MsQuicConnectionSendResumptionTicket(
     _In_ QUIC_SEND_RESUMPTION_FLAGS Flags,
     _In_ uint16_t DataLength,
     _In_reads_bytes_opt_(DataLength)
-        const uint8_t* ResumptionData
-    )
+    const uint8_t* ResumptionData
+)
 {
     QUIC_STATUS Status;
     QUIC_CONNECTION* Connection;
@@ -498,26 +537,33 @@ MsQuicConnectionSendResumptionTicket(
         Handle);
 
     if (DataLength > QUIC_MAX_RESUMPTION_APP_DATA_LENGTH ||
-        (ResumptionData == NULL && DataLength != 0)) {
+            (ResumptionData == NULL && DataLength != 0))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (Flags > (QUIC_SEND_RESUMPTION_FLAG_FINAL | QUIC_SEND_RESUMPTION_FLAG_NONE)) {
+    if (Flags > (QUIC_SEND_RESUMPTION_FLAG_FINAL | QUIC_SEND_RESUMPTION_FLAG_NONE))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (IS_CONN_HANDLE(Handle)) {
+    if (IS_CONN_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else if (IS_STREAM_HANDLE(Handle)) {
+    }
+    else if (IS_STREAM_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         QUIC_STREAM* Stream = (QUIC_STREAM*)Handle;
         CXPLAT_TEL_ASSERT(!Stream->Flags.HandleClosed);
         CXPLAT_TEL_ASSERT(!Stream->Flags.Freed);
         Connection = Stream->Connection;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -525,21 +571,25 @@ MsQuicConnectionSendResumptionTicket(
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
     QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
 
-    if (!QuicConnIsServer(Connection)) {
+    if (!QuicConnIsServer(Connection))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     if (!Connection->State.ResumptionEnabled ||
-        !Connection->State.Connected ||
-        !Connection->Crypto.TlsState.HandshakeComplete) {
+            !Connection->State.Connected ||
+            !Connection->Crypto.TlsState.HandshakeComplete)
+    {
         Status = QUIC_STATUS_INVALID_STATE; // TODO - Support queueing up the ticket to send once connected.
         goto Error;
     }
 
-    if (DataLength > 0) {
+    if (DataLength > 0)
+    {
         ResumptionDataCopy = CXPLAT_ALLOC_NONPAGED(DataLength, QUIC_POOL_APP_RESUMPTION_DATA);
-        if (ResumptionDataCopy == NULL) {
+        if (ResumptionDataCopy == NULL)
+        {
             Status = QUIC_STATUS_OUT_OF_MEMORY;
             QuicTraceEvent(
                 AllocFailure,
@@ -552,7 +602,8 @@ MsQuicConnectionSendResumptionTicket(
     }
 
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -575,7 +626,8 @@ MsQuicConnectionSendResumptionTicket(
 
 Error:
 
-    if (ResumptionDataCopy != NULL) {
+    if (ResumptionDataCopy != NULL)
+    {
         CXPLAT_FREE(ResumptionDataCopy, QUIC_POOL_APP_RESUMPTION_DATA);
     }
 
@@ -596,8 +648,8 @@ MsQuicStreamOpen(
     _In_ _Pre_defensive_ QUIC_STREAM_CALLBACK_HANDLER Handler,
     _In_opt_ void* Context,
     _Outptr_ _At_(*NewStream, __drv_allocatesMem(Mem)) _Pre_defensive_
-        HQUIC *NewStream
-    )
+    HQUIC* NewStream
+)
 {
     QUIC_STATUS Status;
     QUIC_CONNECTION* Connection;
@@ -609,28 +661,35 @@ MsQuicStreamOpen(
         Handle);
 
     if (NewStream == NULL ||
-        Handler == NULL) {
+            Handler == NULL)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (IS_CONN_HANDLE(Handle)) {
+    if (IS_CONN_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else if (IS_STREAM_HANDLE(Handle)) {
+    }
+    else if (IS_STREAM_HANDLE(Handle))
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         QUIC_STREAM* Stream = (QUIC_STREAM*)Handle;
         CXPLAT_TEL_ASSERT(!Stream->Flags.HandleClosed);
         CXPLAT_TEL_ASSERT(!Stream->Flags.Freed);
         Connection = Stream->Connection;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (QuicConnIsClosed(Connection)) {
+    if (QuicConnIsClosed(Connection))
+    {
         Status = QUIC_STATUS_INVALID_STATE;
         goto Error;
     }
@@ -642,7 +701,8 @@ MsQuicStreamOpen(
             !!(Flags & QUIC_STREAM_OPEN_FLAG_UNIDIRECTIONAL),
             !!(Flags & QUIC_STREAM_OPEN_FLAG_0_RTT),
             (QUIC_STREAM**)NewStream);
-    if (QUIC_FAILED(Status)) {
+    if (QUIC_FAILED(Status))
+    {
         goto Error;
     }
 
@@ -666,8 +726,8 @@ void
 QUIC_API
 MsQuicStreamClose(
     _In_ _Pre_defensive_ __drv_freesMem(Mem)
-        HQUIC Handle
-    )
+    HQUIC Handle
+)
 {
     QUIC_STREAM* Stream;
     QUIC_CONNECTION* Connection;
@@ -680,7 +740,8 @@ MsQuicStreamClose(
         QUIC_TRACE_API_STREAM_CLOSE,
         Handle);
 
-    if (!IS_STREAM_HANDLE(Handle)) {
+    if (!IS_STREAM_HANDLE(Handle))
+    {
         goto Error;
     }
 
@@ -694,24 +755,29 @@ MsQuicStreamClose(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
         QuicStreamClose(Stream);
 
-    } else {
+    }
+    else
+    {
 
         QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
 
         BOOLEAN AlreadyShutdownComplete = Stream->ClientCallbackHandler == NULL;
-        if (AlreadyShutdownComplete) {
+        if (AlreadyShutdownComplete)
+        {
             //
             // No need to wait for the close if already shutdown complete.
             //
             QUIC_OPERATION* Oper =
                 QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-            if (Oper != NULL) {
+            if (Oper != NULL)
+            {
                 Oper->API_CALL.Context->Type = QUIC_API_TYPE_STRM_CLOSE;
                 Oper->API_CALL.Context->STRM_CLOSE.Stream = Stream;
                 QuicConnQueueOper(Connection, Oper);
@@ -758,7 +824,7 @@ QUIC_API
 MsQuicStreamStart(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ QUIC_STREAM_START_FLAGS Flags
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_STREAM* Stream;
@@ -770,7 +836,8 @@ MsQuicStreamStart(
         QUIC_TRACE_API_STREAM_START,
         Handle);
 
-    if (!IS_STREAM_HANDLE(Handle)) {
+    if (!IS_STREAM_HANDLE(Handle))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Exit;
     }
@@ -785,22 +852,27 @@ MsQuicStreamStart(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Stream->Flags.Started) {
+    if (Stream->Flags.Started)
+    {
         Status = QUIC_STATUS_INVALID_STATE;
         goto Exit;
     }
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
         Status = QuicStreamStart(Stream, Flags, FALSE);
 
-    } else if (Flags & QUIC_STREAM_START_FLAG_ASYNC) {
+    }
+    else if (Flags & QUIC_STREAM_START_FLAG_ASYNC)
+    {
 
         QUIC_OPERATION* Oper =
             QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-        if (Oper == NULL) {
+        if (Oper == NULL)
+        {
             Status = QUIC_STATUS_OUT_OF_MEMORY;
             QuicTraceEvent(
                 AllocFailure,
@@ -826,7 +898,9 @@ MsQuicStreamStart(
         QuicConnQueueOper(Connection, Oper);
         Status = QUIC_STATUS_PENDING;
 
-    } else {
+    }
+    else
+    {
 
         QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
 
@@ -873,7 +947,7 @@ MsQuicStreamShutdown(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ QUIC_STREAM_SHUTDOWN_FLAGS Flags,
     _In_ _Pre_defensive_ QUIC_UINT62 ErrorCode
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_STREAM* Stream;
@@ -887,18 +961,21 @@ MsQuicStreamShutdown(
         Handle);
 
     if (!IS_STREAM_HANDLE(Handle) ||
-        Flags == 0 || Flags == QUIC_STREAM_SHUTDOWN_SILENT) {
+            Flags == 0 || Flags == QUIC_STREAM_SHUTDOWN_SILENT)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
-    if (ErrorCode > QUIC_UINT62_MAX) {
+    if (ErrorCode > QUIC_UINT62_MAX)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     if (Flags & QUIC_STREAM_SHUTDOWN_FLAG_GRACEFUL &&
-        Flags != QUIC_STREAM_SHUTDOWN_FLAG_GRACEFUL) {
+            Flags != QUIC_STREAM_SHUTDOWN_FLAG_GRACEFUL)
+    {
         //
         // Not allowed to use the graceful shutdown flag with any other flag.
         //
@@ -907,9 +984,10 @@ MsQuicStreamShutdown(
     }
 
     if (Flags & QUIC_STREAM_SHUTDOWN_FLAG_IMMEDIATE &&
-        Flags != (QUIC_STREAM_SHUTDOWN_FLAG_IMMEDIATE |
-                  QUIC_STREAM_SHUTDOWN_FLAG_ABORT_RECEIVE |
-                  QUIC_STREAM_SHUTDOWN_FLAG_ABORT_SEND)) {
+            Flags != (QUIC_STREAM_SHUTDOWN_FLAG_IMMEDIATE |
+                      QUIC_STREAM_SHUTDOWN_FLAG_ABORT_RECEIVE |
+                      QUIC_STREAM_SHUTDOWN_FLAG_ABORT_SEND))
+    {
         //
         // Immediate shutdown requires both directions to be aborted.
         //
@@ -927,19 +1005,23 @@ MsQuicStreamShutdown(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
         QuicStreamShutdown(Stream, Flags, ErrorCode);
         Status = QUIC_STATUS_SUCCESS;
 
-    } else {
+    }
+    else
+    {
 
         QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
 
         Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-        if (Oper == NULL) {
+        if (Oper == NULL)
+        {
             Status = QUIC_STATUS_OUT_OF_MEMORY;
             QuicTraceEvent(
                 AllocFailure,
@@ -983,11 +1065,11 @@ QUIC_API
 MsQuicStreamSend(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_reads_(BufferCount) _Pre_defensive_
-        const QUIC_BUFFER * const Buffers,
+    const QUIC_BUFFER* const Buffers,
     _In_ uint32_t BufferCount,
     _In_ QUIC_SEND_FLAGS Flags,
     _In_opt_ void* ClientSendContext
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_STREAM* Stream;
@@ -1004,7 +1086,8 @@ MsQuicStreamSend(
         Handle);
 
     if (!IS_STREAM_HANDLE(Handle) ||
-        (Buffers == NULL && BufferCount != 0)) {
+            (Buffers == NULL && BufferCount != 0))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Exit;
     }
@@ -1019,15 +1102,17 @@ MsQuicStreamSend(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
     QUIC_CONN_VERIFY(Connection,
-        (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
-        !Connection->State.HandleClosed);
+                     (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
+                     !Connection->State.HandleClosed);
 
     TotalLength = 0;
-    for (uint32_t i = 0; i < BufferCount; ++i) {
+    for (uint32_t i = 0; i < BufferCount; ++i)
+    {
         TotalLength += Buffers[i].Length;
     }
 
-    if (TotalLength > UINT32_MAX) {
+    if (TotalLength > UINT32_MAX)
+    {
         QuicTraceEvent(
             StreamError,
             "[strm][%p] ERROR, %s.",
@@ -1039,7 +1124,8 @@ MsQuicStreamSend(
 
 #pragma prefast(suppress: __WARNING_6014, "Memory is correctly freed (QuicStreamCompleteSendRequest).")
     SendRequest = CxPlatPoolAlloc(&Connection->Worker->SendRequestPool);
-    if (SendRequest == NULL) {
+    if (SendRequest == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -1057,11 +1143,15 @@ MsQuicStreamSend(
     SendRequest->ClientContext = ClientSendContext;
 
     CxPlatDispatchLockAcquire(&Stream->ApiSendRequestLock);
-    if (!Stream->Flags.SendEnabled) {
+    if (!Stream->Flags.SendEnabled)
+    {
         Status = QUIC_STATUS_INVALID_STATE;
-    } else {
+    }
+    else
+    {
         QUIC_SEND_REQUEST** ApiSendRequestsTail = &Stream->ApiSendRequests;
-        while (*ApiSendRequestsTail != NULL) {
+        while (*ApiSendRequestsTail != NULL)
+        {
             ApiSendRequestsTail = &((*ApiSendRequestsTail)->Next);
             QueueOper = FALSE; // Not necessary if the previous send hasn't been flushed yet.
         }
@@ -1070,14 +1160,17 @@ MsQuicStreamSend(
     }
     CxPlatDispatchLockRelease(&Stream->ApiSendRequestLock);
 
-    if (QUIC_FAILED(Status)) {
+    if (QUIC_FAILED(Status))
+    {
         CxPlatPoolFree(&Connection->Worker->SendRequestPool, SendRequest);
         goto Exit;
     }
 
-    if (QueueOper) {
+    if (QueueOper)
+    {
         Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-        if (Oper == NULL) {
+        if (Oper == NULL)
+        {
             Status = QUIC_STATUS_OUT_OF_MEMORY;
             QuicTraceEvent(
                 AllocFailure,
@@ -1120,7 +1213,7 @@ QUIC_API
 MsQuicStreamReceiveSetEnabled(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ BOOLEAN IsEnabled
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_STREAM* Stream;
@@ -1133,7 +1226,8 @@ MsQuicStreamReceiveSetEnabled(
         QUIC_TRACE_API_STREAM_RECEIVE_SET_ENABLED,
         Handle);
 
-    if (!IS_STREAM_HANDLE(Handle)) {
+    if (!IS_STREAM_HANDLE(Handle))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -1148,11 +1242,12 @@ MsQuicStreamReceiveSetEnabled(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
     QUIC_CONN_VERIFY(Connection,
-        (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
-        !Connection->State.HandleClosed);
+                     (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
+                     !Connection->State.HandleClosed);
 
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -1194,7 +1289,7 @@ QUIC_API
 MsQuicStreamReceiveComplete(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_ uint64_t BufferLength
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_STREAM* Stream;
@@ -1207,7 +1302,8 @@ MsQuicStreamReceiveComplete(
         QUIC_TRACE_API_STREAM_RECEIVE_COMPLETE,
         Handle);
 
-    if (!IS_STREAM_HANDLE(Handle)) {
+    if (!IS_STREAM_HANDLE(Handle))
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Exit;
     }
@@ -1222,16 +1318,18 @@ MsQuicStreamReceiveComplete(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
     QUIC_CONN_VERIFY(Connection,
-        (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
-        !Connection->State.HandleClosed);
+                     (Connection->WorkerThreadID == CxPlatCurThreadID()) ||
+                     !Connection->State.HandleClosed);
 
-    if (!Stream->Flags.Started || !Stream->Flags.ReceiveCallPending) {
+    if (!Stream->Flags.Started || !Stream->Flags.ReceiveCallPending)
+    {
         Status = QUIC_STATUS_INVALID_STATE;
         goto Exit;
     }
 
     Oper = QuicOperationAlloc(Connection->Worker, QUIC_OPER_TYPE_API_CALL);
-    if (Oper == NULL) {
+    if (Oper == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         QuicTraceEvent(
             AllocFailure,
@@ -1274,17 +1372,18 @@ QUIC_API
 MsQuicSetParam(
     _When_(Level == QUIC_PARAM_LEVEL_GLOBAL, _Reserved_)
     _When_(Level != QUIC_PARAM_LEVEL_GLOBAL, _In_ _Pre_defensive_)
-        HQUIC Handle,
+    HQUIC Handle,
     _In_ _Pre_defensive_ QUIC_PARAM_LEVEL Level,
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    )
+    const void* Buffer
+)
 {
     CXPLAT_PASSIVE_CODE();
 
-    if ((Handle == NULL) ^ (Level == QUIC_PARAM_LEVEL_GLOBAL)) {
+    if ((Handle == NULL) ^ (Level == QUIC_PARAM_LEVEL_GLOBAL))
+    {
         return QUIC_STATUS_INVALID_PARAMETER;
     }
 
@@ -1296,7 +1395,8 @@ MsQuicSetParam(
 
     QUIC_STATUS Status;
 
-    if (Level == QUIC_PARAM_LEVEL_GLOBAL) {
+    if (Level == QUIC_PARAM_LEVEL_GLOBAL)
+    {
         //
         // Global parameters are processed inline.
         //
@@ -1305,8 +1405,9 @@ MsQuicSetParam(
     }
 
     if (Handle->Type == QUIC_HANDLE_TYPE_REGISTRATION ||
-        Handle->Type == QUIC_HANDLE_TYPE_CONFIGURATION ||
-        Handle->Type == QUIC_HANDLE_TYPE_LISTENER) {
+            Handle->Type == QUIC_HANDLE_TYPE_CONFIGURATION ||
+            Handle->Type == QUIC_HANDLE_TYPE_LISTENER)
+    {
         //
         // Registration, Configuration and Listener parameters are processed inline.
         //
@@ -1317,21 +1418,27 @@ MsQuicSetParam(
     QUIC_CONNECTION* Connection;
     CXPLAT_EVENT CompletionEvent;
 
-    if (Handle->Type == QUIC_HANDLE_TYPE_STREAM) {
+    if (Handle->Type == QUIC_HANDLE_TYPE_STREAM)
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = ((QUIC_STREAM*)Handle)->Connection;
-    } else if (Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_SERVER ||
-        Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_CLIENT) {
+    }
+    else if (Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_SERVER ||
+             Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_CLIENT)
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
@@ -1384,18 +1491,19 @@ QUIC_API
 MsQuicGetParam(
     _When_(Level == QUIC_PARAM_LEVEL_GLOBAL, _Reserved_)
     _When_(Level != QUIC_PARAM_LEVEL_GLOBAL, _In_ _Pre_defensive_)
-        HQUIC Handle,
+    HQUIC Handle,
     _In_ _Pre_defensive_ QUIC_PARAM_LEVEL Level,
     _In_ uint32_t Param,
     _Inout_ _Pre_defensive_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    )
+    void* Buffer
+)
 {
     CXPLAT_PASSIVE_CODE();
 
     if (((Handle == NULL) ^ (Level == QUIC_PARAM_LEVEL_GLOBAL)) ||
-        BufferLength == NULL) {
+            BufferLength == NULL)
+    {
         return QUIC_STATUS_INVALID_PARAMETER;
     }
 
@@ -1407,7 +1515,11 @@ MsQuicGetParam(
         QUIC_TRACE_API_GET_PARAM,
         Handle);
 
-    if (Level == QUIC_PARAM_LEVEL_GLOBAL) {
+    QUIC_OPERATION Oper = { 0 };
+    QUIC_API_CONTEXT ApiCtx;
+
+    if (Level == QUIC_PARAM_LEVEL_GLOBAL)
+    {
         //
         // Global parameters are processed inline.
         //
@@ -1416,8 +1528,9 @@ MsQuicGetParam(
     }
 
     if (Handle->Type == QUIC_HANDLE_TYPE_REGISTRATION ||
-        Handle->Type == QUIC_HANDLE_TYPE_CONFIGURATION ||
-        Handle->Type == QUIC_HANDLE_TYPE_LISTENER) {
+            Handle->Type == QUIC_HANDLE_TYPE_CONFIGURATION ||
+            Handle->Type == QUIC_HANDLE_TYPE_LISTENER)
+    {
         //
         // Registration, Configuration and Listener parameters are processed inline.
         //
@@ -1428,21 +1541,27 @@ MsQuicGetParam(
     QUIC_CONNECTION* Connection;
     CXPLAT_EVENT CompletionEvent;
 
-    if (Handle->Type == QUIC_HANDLE_TYPE_STREAM) {
+    if (Handle->Type == QUIC_HANDLE_TYPE_STREAM)
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = ((QUIC_STREAM*)Handle)->Connection;
-    } else if (Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_SERVER ||
-        Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_CLIENT) {
+    }
+    else if (Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_SERVER ||
+             Handle->Type == QUIC_HANDLE_TYPE_CONNECTION_CLIENT)
+    {
 #pragma prefast(suppress: __WARNING_25024, "Pointer cast already validated.")
         Connection = (QUIC_CONNECTION*)Handle;
-    } else {
+    }
+    else
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.Freed);
 
-    if (Connection->WorkerThreadID == CxPlatCurThreadID()) {
+    if (Connection->WorkerThreadID == CxPlatCurThreadID())
+    {
         //
         // Execute this blocking API call inline if called on the worker thread.
         //
@@ -1452,8 +1571,6 @@ MsQuicGetParam(
 
     QUIC_CONN_VERIFY(Connection, !Connection->State.HandleClosed);
 
-    QUIC_OPERATION Oper = { 0 };
-    QUIC_API_CONTEXT ApiCtx;
 
     Oper.Type = QUIC_OPER_TYPE_API_CALL;
     Oper.FreeAfterProcess = FALSE;
@@ -1495,11 +1612,11 @@ QUIC_API
 MsQuicDatagramSend(
     _In_ _Pre_defensive_ HQUIC Handle,
     _In_reads_(BufferCount) _Pre_defensive_
-        const QUIC_BUFFER* const Buffers,
+    const QUIC_BUFFER* const Buffers,
     _In_ uint32_t BufferCount,
     _In_ QUIC_SEND_FLAGS Flags,
     _In_opt_ void* ClientSendContext
-    )
+)
 {
     QUIC_STATUS Status;
     QUIC_CONNECTION* Connection;
@@ -1513,8 +1630,9 @@ MsQuicDatagramSend(
         Handle);
 
     if (!IS_CONN_HANDLE(Handle) ||
-        Buffers == NULL ||
-        BufferCount == 0) {
+            Buffers == NULL ||
+            BufferCount == 0)
+    {
         Status = QUIC_STATUS_INVALID_PARAMETER;
         goto Error;
     }
@@ -1525,11 +1643,13 @@ MsQuicDatagramSend(
     CXPLAT_TEL_ASSERT(!Connection->State.Freed);
 
     TotalLength = 0;
-    for (uint32_t i = 0; i < BufferCount; ++i) {
+    for (uint32_t i = 0; i < BufferCount; ++i)
+    {
         TotalLength += Buffers[i].Length;
     }
 
-    if (TotalLength > UINT16_MAX) {
+    if (TotalLength > UINT16_MAX)
+    {
         QuicTraceEvent(
             ConnError,
             "[conn][%p] ERROR, %s.",
@@ -1540,8 +1660,9 @@ MsQuicDatagramSend(
     }
 
 #pragma prefast(suppress: __WARNING_6014, "Memory is correctly freed (...).")
-    SendRequest = CxPlatPoolAlloc(&Connection->Worker->SendRequestPool);
-    if (SendRequest == NULL) {
+    SendRequest = (QUIC_SEND_REQUEST*)CxPlatPoolAlloc(&Connection->Worker->SendRequestPool);
+    if (SendRequest == NULL)
+    {
         Status = QUIC_STATUS_OUT_OF_MEMORY;
         goto Error;
     }

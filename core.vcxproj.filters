@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\core\ack_tracker.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\api.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\binding.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\configuration.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\congestion_control.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\connection.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\crypto.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\crypto_tls.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\datagram.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\frame.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\injection.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\inline.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\library.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\listener.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\lookup.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\loss_detection.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\operation.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\packet.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\packet_builder.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\packet_space.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\path.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\range.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\recv_buffer.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\registration.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\send.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\send_buffer.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\sent_packet_metadata.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\settings.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\stream.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\stream_recv.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\stream_send.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\stream_set.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\timer_wheel.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\version_neg.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\worker.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{e9fccf57-9bb8-4b15-85c2-062810caada3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

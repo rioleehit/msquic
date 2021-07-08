@@ -26,7 +26,7 @@ if(QUIC_ENABLE_LOGGING)
     endif()
 endif()
 
-if (NOT MSVC AND NOT APPLE)
+if (NOT MSVC AND NOT APPLE AND NOT QUIC_PLATFORM_ANDROID)
     find_library(ATOMIC NAMES atomic libatomic.so.1)
     if (ATOMIC)
         message(STATUS "Found libatomic: ${ATOMIC}")
@@ -35,7 +35,11 @@ endif()
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(inc INTERFACE Threads::Threads ${CMAKE_DL_LIBS} ${ATOMIC})
+target_link_libraries(inc INTERFACE Threads::Threads ${CMAKE_DL_LIBS})
+
+if(NOT QUIC_PLATFORM_ANDROID)
+target_link_libraries(inc INTERFACE ${ATOMIC})
+endif()
 
 if(WIN32)
     target_link_libraries(inc INTERFACE ws2_32 schannel ntdll bcrypt ncrypt crypt32 iphlpapi advapi32)

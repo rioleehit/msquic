@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -14,7 +14,8 @@
 //
 // Different outcomes for a new incoming connection.
 //
-typedef enum QUIC_CONNECTION_ACCEPT_RESULT {
+typedef enum QUIC_CONNECTION_ACCEPT_RESULT
+{
     QUIC_CONNECTION_ACCEPT,
     QUIC_CONNECTION_REJECT_NO_LISTENER,
     QUIC_CONNECTION_REJECT_BUSY,
@@ -24,9 +25,10 @@ typedef enum QUIC_CONNECTION_ACCEPT_RESULT {
 //
 // Represents per application registration state.
 //
-typedef struct QUIC_REGISTRATION {
-
-    struct QUIC_HANDLE;
+typedef struct QUIC_REGISTRATION
+{
+    //struct QUIC_HANDLE;
+    STRUCT_QUIC_HANDLE;
 
 #ifdef CxPlatVerifierEnabledByAddr
     //
@@ -118,7 +120,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicRegistrationTraceRundown(
     _In_ QUIC_REGISTRATION* Registration
-    );
+);
 
 //
 // Global settings were changed.
@@ -127,7 +129,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicRegistrationSettingsChanged(
     _Inout_ QUIC_REGISTRATION* Registration
-    );
+);
 
 //
 // Determines whether this new connection can be accepted by the registration
@@ -138,7 +140,7 @@ BOOLEAN
 QuicRegistrationAcceptConnection(
     _In_ QUIC_REGISTRATION* Registration,
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Queues a new (client or server) connection to be processed. The worker that
@@ -149,7 +151,7 @@ void
 QuicRegistrationQueueNewConnection(
     _In_ QUIC_REGISTRATION* Registration,
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Sets a registration parameter.
@@ -161,8 +163,8 @@ QuicRegistrationParamSet(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 //
 // Gets a registration parameter.
@@ -174,5 +176,5 @@ QuicRegistrationParamGet(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);

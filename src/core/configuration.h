@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -8,10 +8,10 @@
 //
 // Represents a set of TLS and QUIC configurations and settings.
 //
-typedef struct QUIC_CONFIGURATION {
-
-    struct QUIC_HANDLE;
-
+typedef struct QUIC_CONFIGURATION
+{
+    //struct QUIC_HANDLE;
+    STRUCT_QUIC_HANDLE;
     //
     // Parent registration.
     //
@@ -87,7 +87,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConfigurationUninitialize(
     _In_ __drv_freesMem(Mem) QUIC_CONFIGURATION* Configuration
-    );
+);
 
 //
 // Adds a new references to the configuration.
@@ -96,7 +96,7 @@ inline
 void
 QuicConfigurationAddRef(
     _In_ QUIC_CONFIGURATION* Configuration
-    )
+)
 {
     CxPlatRefIncrement(&Configuration->RefCount);
 }
@@ -108,9 +108,10 @@ inline
 void
 QuicConfigurationRelease(
     _In_ QUIC_CONFIGURATION* Configuration
-    )
+)
 {
-    if (CxPlatRefDecrement(&Configuration->RefCount)) {
+    if (CxPlatRefDecrement(&Configuration->RefCount))
+    {
         QuicConfigurationUninitialize(Configuration);
     }
 }
@@ -122,7 +123,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConfigurationTraceRundown(
     _In_ QUIC_CONFIGURATION* Configuration
-    );
+);
 
 //
 // Global or local settings were changed.
@@ -132,7 +133,7 @@ _Function_class_(CXPLAT_STORAGE_CHANGE_CALLBACK)
 void
 QuicConfigurationSettingsChanged(
     _Inout_ QUIC_CONFIGURATION* Configuration
-    );
+);
 
 //
 // Gets a configuration parameter.
@@ -144,8 +145,8 @@ QuicConfigurationParamGet(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);
 
 //
 // Sets a configuration parameter.
@@ -157,5 +158,5 @@ QuicConfigurationParamSet(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);

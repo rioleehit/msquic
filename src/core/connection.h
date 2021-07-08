@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -26,9 +26,11 @@ typedef struct QUIC_LISTENER QUIC_LISTENER;
 // Different possible states/flags of a connection.
 // Note - Keep quictypes.h's copy up to date.
 //
-typedef union QUIC_CONNECTION_STATE {
+typedef union QUIC_CONNECTION_STATE
+{
     uint32_t Flags;
-    struct {
+    struct
+    {
         BOOLEAN Allocated       : 1;    // Allocated. Used for Debugging.
         BOOLEAN Initialized     : 1;    // Initialized successfully. Used for Debugging.
         BOOLEAN Started         : 1;    // Handshake started.
@@ -171,7 +173,8 @@ typedef union QUIC_CONNECTION_STATE {
 //
 // Different references on a connection.
 //
-typedef enum QUIC_CONNECTION_REF {
+typedef enum QUIC_CONNECTION_REF
+{
 
     QUIC_CONN_REF_HANDLE_OWNER,         // Application or Core.
     QUIC_CONN_REF_LOOKUP_TABLE,         // Per registered CID.
@@ -183,26 +186,10 @@ typedef enum QUIC_CONNECTION_REF {
 } QUIC_CONNECTION_REF;
 
 //
-// A single timer entry on the connection.
-//
-typedef struct QUIC_CONN_TIMER_ENTRY {
-
-    //
-    // The type of timer this entry is for.
-    //
-    QUIC_CONN_TIMER_TYPE Type;
-
-    //
-    // The absolute time (in us) for timer expiration.
-    //
-    uint64_t ExpirationTime;
-
-} QUIC_CONN_TIMER_ENTRY;
-
-//
 // Per connection statistics.
 //
-typedef struct QUIC_CONN_STATS {
+typedef struct QUIC_CONN_STATS
+{
 
     uint64_t CorrelationId;
 
@@ -219,25 +206,29 @@ typedef struct QUIC_CONN_STATS {
     //
     // All timing values are in microseconds.
     //
-    struct {
+    struct
+    {
         uint64_t Start;
         uint64_t InitialFlightEnd;      // Processed all peer's Initial packets
         uint64_t HandshakeFlightEnd;    // Processed all peer's Handshake packets
     } Timing;
 
-    struct {
+    struct
+    {
         uint32_t LastQueueTime;         // Time the connection last entered the work queue.
         uint64_t DrainCount;            // Sum of drain calls
         uint64_t OperationCount;        // Sum of operations processed
     } Schedule;
 
-    struct {
+    struct
+    {
         uint32_t ClientFlight1Bytes;    // Sum of TLS payloads
         uint32_t ServerFlight1Bytes;    // Sum of TLS payloads
         uint32_t ClientFlight2Bytes;    // Sum of TLS payloads
     } Handshake;
 
-    struct {
+    struct
+    {
         uint64_t TotalPackets;          // QUIC packets; could be coalesced into fewer UDP datagrams.
         uint64_t RetransmittablePackets;
         uint64_t SuspectedLostPackets;
@@ -250,7 +241,8 @@ typedef struct QUIC_CONN_STATS {
         uint32_t PersistentCongestionCount;
     } Send;
 
-    struct {
+    struct
+    {
         uint64_t TotalPackets;          // QUIC packets; could be coalesced into fewer UDP datagrams.
         uint64_t ReorderedPackets;      // Packets where packet number is less than highest seen.
         uint64_t DroppedPackets;        // Includes DuplicatePackets.
@@ -263,20 +255,41 @@ typedef struct QUIC_CONN_STATS {
         uint64_t TotalStreamBytes;      // Sum of stream payloads
     } Recv;
 
-    struct {
+    struct
+    {
         uint32_t KeyUpdateCount;        // Count of key updates completed.
     } Misc;
 
 } QUIC_CONN_STATS;
 
 //
+// A single timer entry on the connection.
+//
+typedef struct QUIC_CONN_TIMER_ENTRY
+{
+
+    //
+    // The type of timer this entry is for.
+    //
+    QUIC_CONN_TIMER_TYPE Type;
+
+    //
+    // The absolute time (in us) for timer expiration.
+    //
+    uint64_t ExpirationTime;
+
+} QUIC_CONN_TIMER_ENTRY;
+
+//
 // Connection-specific state.
 //   N.B. In general, all variables should only be written on the QUIC worker
 //        thread.
 //
-typedef struct QUIC_CONNECTION {
+typedef struct QUIC_CONNECTION
+{
 
-    struct QUIC_HANDLE;
+    //struct QUIC_HANDLE;
+    STRUCT_QUIC_HANDLE;
 
     //
     // Link into the registrations's list of connections.
@@ -569,7 +582,8 @@ typedef struct QUIC_CONNECTION {
 
 } QUIC_CONNECTION;
 
-typedef struct QUIC_SERIALIZED_RESUMPTION_STATE {
+typedef struct QUIC_SERIALIZED_RESUMPTION_STATE
+{
 
     uint32_t QuicVersion;
     QUIC_TRANSPORT_PARAMETERS TransportParameters;
@@ -606,8 +620,8 @@ typedef struct QUIC_SERIALIZED_RESUMPTION_STATE {
 inline
 BOOLEAN
 QuicConnIsServer(
-    _In_ const QUIC_CONNECTION * const Connection
-    )
+    _In_ const QUIC_CONNECTION* const Connection
+)
 {
     return ((QUIC_HANDLE*)Connection)->Type == QUIC_HANDLE_TYPE_CONNECTION_SERVER;
 }
@@ -618,8 +632,8 @@ QuicConnIsServer(
 inline
 BOOLEAN
 QuicConnIsClosed(
-    _In_ const QUIC_CONNECTION * const Connection
-    )
+    _In_ const QUIC_CONNECTION* const Connection
+)
 {
     return Connection->State.ClosedLocally || Connection->State.ClosedRemotely;
 }
@@ -630,8 +644,8 @@ QuicConnIsClosed(
 inline
 uint64_t
 QuicConnGetNextExpirationTime(
-    _In_ const QUIC_CONNECTION * const Connection
-    )
+    _In_ const QUIC_CONNECTION* const Connection
+)
 {
     return Connection->Timers[0].ExpirationTime;
 }
@@ -644,7 +658,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicStreamSetGetConnection(
     _In_ QUIC_STREAM_SET* StreamSet
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(StreamSet, QUIC_CONNECTION, Streams);
 }
@@ -657,7 +671,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicCryptoGetConnection(
     _In_ QUIC_CRYPTO* Crypto
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(Crypto, QUIC_CONNECTION, Crypto);
 }
@@ -670,7 +684,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicSendGetConnection(
     _In_ QUIC_SEND* Send
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(Send, QUIC_CONNECTION, Send);
 }
@@ -683,7 +697,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicCongestionControlGetConnection(
     _In_ QUIC_CONGESTION_CONTROL* Cc
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(Cc, QUIC_CONNECTION, CongestionControl);
 }
@@ -696,7 +710,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicLossDetectionGetConnection(
     _In_ QUIC_LOSS_DETECTION* LossDetection
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(LossDetection, QUIC_CONNECTION, LossDetection);
 }
@@ -709,7 +723,7 @@ _Ret_notnull_
 QUIC_CONNECTION*
 QuicDatagramGetConnection(
     _In_ const QUIC_DATAGRAM* const Datagram
-    )
+)
 {
     return CXPLAT_CONTAINING_RECORD(Datagram, QUIC_CONNECTION, Datagram);
 }
@@ -718,9 +732,10 @@ inline
 void
 QuicConnLogOutFlowStats(
     _In_ const QUIC_CONNECTION* const Connection
-    )
+)
 {
-    if (!QuicTraceEventEnabled(ConnOutFlowStats)) {
+    if (!QuicTraceEventEnabled(ConnOutFlowStats))
+    {
         return;
     }
 
@@ -759,7 +774,7 @@ inline
 void
 QuicConnLogInFlowStats(
     _In_ const QUIC_CONNECTION* const Connection
-    )
+)
 {
     UNREFERENCED_PARAMETER(Connection);
     QuicTraceEvent(
@@ -773,7 +788,7 @@ inline
 void
 QuicConnLogStatistics(
     _In_ const QUIC_CONNECTION* const Connection
-    )
+)
 {
     const QUIC_PATH* Path = &Connection->Paths[0];
     UNREFERENCED_PARAMETER(Path);
@@ -807,9 +822,10 @@ BOOLEAN
 QuicConnAddOutFlowBlockedReason(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_FLOW_BLOCK_REASON Reason
-    )
+)
 {
-    if (!(Connection->OutFlowBlockedReasons & Reason)) {
+    if (!(Connection->OutFlowBlockedReasons & Reason))
+    {
         Connection->OutFlowBlockedReasons |= Reason;
         QuicTraceEvent(
             ConnOutFlowBlocked,
@@ -826,9 +842,10 @@ BOOLEAN
 QuicConnRemoveOutFlowBlockedReason(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_FLOW_BLOCK_REASON Reason
-    )
+)
 {
-    if ((Connection->OutFlowBlockedReasons & Reason)) {
+    if ((Connection->OutFlowBlockedReasons & Reason))
+    {
         Connection->OutFlowBlockedReasons &= ~Reason;
         QuicTraceEvent(
             ConnOutFlowBlocked,
@@ -849,11 +866,11 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 __drv_allocatesMem(Mem)
 _Must_inspect_result_
 _Success_(return != NULL)
-QUIC_CONNECTION*
+QUIC_CONNECTION *
 QuicConnAlloc(
     _In_ QUIC_REGISTRATION* Registration,
     _In_opt_ const CXPLAT_RECV_DATA* const Datagram
-    );
+);
 
 //
 // Called to free the memory for a connection.
@@ -862,7 +879,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicConnFree(
     _In_ __drv_freesMem(Mem) QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Releases the handle usage of the app.
@@ -871,13 +888,13 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicConnCloseHandle(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnOnShutdownComplete(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 #if DEBUG
 _IRQL_requires_max_(DISPATCH_LEVEL)
@@ -885,7 +902,7 @@ inline
 void
 QuicConnValidate(
     _In_ QUIC_CONNECTION* Connection
-    )
+)
 {
     CXPLAT_FRE_ASSERT(!Connection->State.Freed);
 }
@@ -902,7 +919,7 @@ void
 QuicConnAddRef(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_CONNECTION_REF Ref
-    )
+)
 {
     QuicConnValidate(Connection);
 
@@ -927,7 +944,7 @@ void
 QuicConnRelease(
     _In_ __drv_freesMem(Mem) QUIC_CONNECTION* Connection,
     _In_ QUIC_CONNECTION_REF Ref
-    )
+)
 {
     QuicConnValidate(Connection);
 
@@ -940,13 +957,16 @@ QuicConnRelease(
 #endif
 
     CXPLAT_DBG_ASSERT(Connection->RefCount > 0);
-    if (InterlockedDecrement((volatile long*)&Connection->RefCount) == 0) {
+    if (InterlockedDecrement((volatile long*)&Connection->RefCount) == 0)
+    {
 #if DEBUG
-        for (uint32_t i = 0; i < QUIC_CONN_REF_COUNT; i++) {
+        for (uint32_t i = 0; i < QUIC_CONN_REF_COUNT; i++)
+        {
             CXPLAT_TEL_ASSERT(Connection->RefTypeCount[i] == 0);
         }
 #endif
-        if (Ref == QUIC_CONN_REF_LOOKUP_RESULT) {
+        if (Ref == QUIC_CONN_REF_LOOKUP_RESULT)
+        {
             //
             // Lookup results cannot be the last ref, as they can result in the
             // datapath binding being deleted on a callback. Instead, queue the
@@ -954,7 +974,9 @@ QuicConnRelease(
             //
             CXPLAT_DBG_ASSERT(Connection->Worker != NULL);
             QuicWorkerQueueConnection(Connection->Worker, Connection);
-        } else {
+        }
+        else
+        {
             QuicConnFree(Connection);
         }
     }
@@ -969,7 +991,7 @@ void
 QuicConnRegister(
     _Inout_ QUIC_CONNECTION* Connection,
     _Inout_ QUIC_REGISTRATION* Registration
-    );
+);
 
 //
 // Tracing rundown for the connection.
@@ -978,7 +1000,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicConnQueueTraceRundown(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Indicates an event to the application layer.
@@ -988,7 +1010,7 @@ QUIC_STATUS
 QuicConnIndicateEvent(
     _In_ QUIC_CONNECTION* Connection,
     _Inout_ QUIC_CONNECTION_EVENT* Event
-    );
+);
 
 //
 // Allows the connection to drain some operations that it currently has
@@ -999,7 +1021,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 BOOLEAN
 QuicConnDrainOperations(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Queues a new operation on the connection and queues the connection on a
@@ -1010,14 +1032,14 @@ void
 QuicConnQueueOper(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_OPERATION* Oper
-    );
+);
 
 _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicConnQueueHighestPriorityOper(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_OPERATION* Oper
-    );
+);
 
 //
 // Generates a new source connection ID.
@@ -1027,7 +1049,7 @@ QUIC_CID_HASH_ENTRY*
 QuicConnGenerateNewSourceCid(
     _In_ QUIC_CONNECTION* Connection,
     _In_ BOOLEAN IsInitial
-    );
+);
 
 //
 // Generates any necessary source CIDs.
@@ -1037,7 +1059,7 @@ void
 QuicConnGenerateNewSourceCids(
     _In_ QUIC_CONNECTION* Connection,
     _In_ BOOLEAN ReplaceExistingCids
-    );
+);
 
 //
 // Retires the currently used destination connection ID.
@@ -1047,7 +1069,7 @@ BOOLEAN
 QuicConnRetireCurrentDestCid(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_PATH* Path
-    );
+);
 
 //
 // Look up a source CID by sequence number.
@@ -1055,24 +1077,27 @@ QuicConnRetireCurrentDestCid(
 _IRQL_requires_max_(DISPATCH_LEVEL)
 _Success_(return != NULL)
 inline
-QUIC_CID_HASH_ENTRY*
+QUIC_CID_HASH_ENTRY *
 QuicConnGetSourceCidFromSeq(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_VAR_INT SequenceNumber,
     _In_ BOOLEAN RemoveFromList,
     _Out_ BOOLEAN* IsLastCid
-    )
+)
 {
     for (CXPLAT_SLIST_ENTRY** Entry = &Connection->SourceCids.Next;
             *Entry != NULL;
-            Entry = &(*Entry)->Next) {
+            Entry = &(*Entry)->Next)
+    {
         QUIC_CID_HASH_ENTRY* SourceCid =
             CXPLAT_CONTAINING_RECORD(
                 *Entry,
                 QUIC_CID_HASH_ENTRY,
                 Link);
-        if (SourceCid->CID.SequenceNumber == SequenceNumber) {
-            if (RemoveFromList) {
+        if (SourceCid->CID.SequenceNumber == SequenceNumber)
+        {
+            if (RemoveFromList)
+            {
                 QuicBindingRemoveSourceConnectionID(
                     Connection->Paths[0].Binding,
                     SourceCid,
@@ -1101,19 +1126,21 @@ QuicConnGetSourceCidFromBuf(
     _In_ QUIC_CONNECTION* Connection,
     _In_ uint8_t CidLength,
     _In_reads_(CidLength)
-        const uint8_t* CidBuffer
-    )
+    const uint8_t* CidBuffer
+)
 {
     for (CXPLAT_SLIST_ENTRY* Entry = Connection->SourceCids.Next;
             Entry != NULL;
-            Entry = Entry->Next) {
+            Entry = Entry->Next)
+    {
         QUIC_CID_HASH_ENTRY* SourceCid =
             CXPLAT_CONTAINING_RECORD(
                 Entry,
                 QUIC_CID_HASH_ENTRY,
                 Link);
         if (CidLength == SourceCid->CID.Length &&
-            memcmp(CidBuffer, SourceCid->CID.Data, CidLength) == 0) {
+                memcmp(CidBuffer, SourceCid->CID.Data, CidLength) == 0)
+        {
             return SourceCid;
         }
     }
@@ -1130,18 +1157,21 @@ QuicConnGetDestCidFromSeq(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_VAR_INT SequenceNumber,
     _In_ BOOLEAN RemoveFromList
-    )
+)
 {
     for (CXPLAT_LIST_ENTRY* Entry = Connection->DestCids.Flink;
             Entry != &Connection->DestCids;
-            Entry = Entry->Flink) {
+            Entry = Entry->Flink)
+    {
         QUIC_CID_CXPLAT_LIST_ENTRY* DestCid =
             CXPLAT_CONTAINING_RECORD(
                 Entry,
                 QUIC_CID_CXPLAT_LIST_ENTRY,
                 Link);
-        if (DestCid->CID.SequenceNumber == SequenceNumber) {
-            if (RemoveFromList) {
+        if (DestCid->CID.SequenceNumber == SequenceNumber)
+        {
+            if (RemoveFromList)
+            {
                 CxPlatListEntryRemove(Entry);
             }
             return DestCid;
@@ -1159,7 +1189,7 @@ QuicConnUpdateRtt(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_PATH* Path,
     _In_ uint32_t LatestRtt
-    );
+);
 
 //
 // Sets a new timer delay in milliseconds.
@@ -1170,7 +1200,7 @@ QuicConnTimerSet(
     _Inout_ QUIC_CONNECTION* Connection,
     _In_ QUIC_CONN_TIMER_TYPE Type,
     _In_ uint64_t DelayMs
-    );
+);
 
 //
 // Cancels a timer.
@@ -1180,7 +1210,7 @@ void
 QuicConnTimerCancel(
     _Inout_ QUIC_CONNECTION* Connection,
     _In_ QUIC_CONN_TIMER_TYPE Type
-    );
+);
 
 //
 // Called when the next timer(s) expire.
@@ -1190,7 +1220,7 @@ void
 QuicConnTimerExpired(
     _Inout_ QUIC_CONNECTION* Connection,
     _In_ uint64_t TimeNow
-    );
+);
 
 //
 // Called when the QUIC version is set.
@@ -1199,7 +1229,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnOnQuicVersionSet(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Called when the local address is changed.
@@ -1208,7 +1238,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnOnLocalAddressChanged(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Restarts the connection with the current configuration.
@@ -1218,7 +1248,7 @@ void
 QuicConnRestart(
     _In_ QUIC_CONNECTION* Connection,
     _In_ BOOLEAN CompleteReset
-    );
+);
 
 //
 // Process peer's transport parameters and updates connection state
@@ -1229,7 +1259,7 @@ QUIC_STATUS
 QuicConnProcessPeerTransportParameters(
     _In_ QUIC_CONNECTION* Connection,
     _In_ BOOLEAN FromResumptionTicket
-    );
+);
 
 //
 // Sets the configuration handle.
@@ -1239,7 +1269,7 @@ QUIC_STATUS
 QuicConnSetConfiguration(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_CONFIGURATION* Configuration
-    );
+);
 
 //
 // Check if the resumption state is ready to be cleaned up and free it.
@@ -1251,7 +1281,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnCleanupServerResumptionState(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Discard any 0-RTT deferred datagrams.
@@ -1260,7 +1290,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnDiscardDeferred0Rtt(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Processes deferred datagrams for newly derived read keys.
@@ -1269,7 +1299,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnFlushDeferred(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Starts the (async) process of closing the connection locally.
@@ -1281,7 +1311,7 @@ QuicConnCloseLocally(
     _In_ uint32_t Flags,
     _In_ uint64_t ErrorCode,
     _In_opt_z_ const char* ErrorMsg
-    );
+);
 
 //
 // Close the connection for a transport protocol error.
@@ -1292,7 +1322,7 @@ void
 QuicConnTransportError(
     _In_ QUIC_CONNECTION* Connection,
     _In_ uint64_t ErrorCode
-    )
+)
 {
     QuicConnCloseLocally(Connection, QUIC_CLOSE_INTERNAL, ErrorCode, NULL);
 }
@@ -1308,7 +1338,7 @@ QuicConnFatalError(
     _In_ QUIC_CONNECTION* Connection,
     _In_ QUIC_STATUS Status,
     _In_opt_z_ const char* ErrorMsg
-    )
+)
 {
     QuicConnCloseLocally(
         Connection,
@@ -1326,7 +1356,7 @@ inline
 void
 QuicConnSilentlyAbort(
     _In_ QUIC_CONNECTION* Connection
-    )
+)
 {
     QuicConnCloseLocally(
         Connection,
@@ -1342,7 +1372,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicConnResetIdleTimeout(
     _In_ QUIC_CONNECTION* Connection
-    );
+);
 
 //
 // Queues a received UDP datagram chain to a connection for processing.
@@ -1353,7 +1383,7 @@ QuicConnQueueRecvDatagrams(
     _In_ QUIC_CONNECTION* Connection,
     _In_ CXPLAT_RECV_DATA* DatagramChain,
     _In_ uint32_t DatagramChainLength
-    );
+);
 
 //
 // Queues an unreachable event to a connection for processing.
@@ -1363,7 +1393,7 @@ void
 QuicConnQueueUnreachable(
     _In_ QUIC_CONNECTION* Connection,
     _In_ const QUIC_ADDR* RemoteAddress
-    );
+);
 
 //
 // Sets a connection parameter.
@@ -1375,8 +1405,8 @@ QuicConnParamSet(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 //
 // Gets a connection parameter.
@@ -1388,5 +1418,5 @@ QuicConnParamGet(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);

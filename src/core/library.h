@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -8,7 +8,8 @@
 //
 // The different possible types of handles.
 //
-typedef enum QUIC_HANDLE_TYPE {
+typedef enum QUIC_HANDLE_TYPE
+{
 
     QUIC_HANDLE_TYPE_REGISTRATION,
     QUIC_HANDLE_TYPE_CONFIGURATION,
@@ -22,7 +23,8 @@ typedef enum QUIC_HANDLE_TYPE {
 //
 // The base type for all QUIC handles.
 //
-typedef struct QUIC_HANDLE {
+typedef struct QUIC_HANDLE
+{
 
     //
     // The current type of handle (client/server/child).
@@ -36,10 +38,15 @@ typedef struct QUIC_HANDLE {
 
 } QUIC_HANDLE;
 
+#define STRUCT_QUIC_HANDLE \
+QUIC_HANDLE_TYPE Type;\
+void* ClientContext
+
 //
 // Per-processor storage for global library state.
 //
-typedef struct QUIC_CACHEALIGN QUIC_LIBRARY_PP {
+typedef struct QUIC_CACHEALIGN QUIC_LIBRARY_PP
+{
 
     //
     // Pool for QUIC_CONNECTIONs.
@@ -66,7 +73,8 @@ typedef struct QUIC_CACHEALIGN QUIC_LIBRARY_PP {
 //
 // Represents the storage for global library state.
 //
-typedef struct QUIC_LIBRARY {
+typedef struct QUIC_LIBRARY
+{
 
     //
     // Tracks whether the library loaded (DllMain or DriverEntry invoked on Windows).
@@ -120,13 +128,13 @@ typedef struct QUIC_LIBRARY {
     //
     // Number of processors currently being used.
     //
-    _Field_range_(>, 0)
+    _Field_range_( >, 0)
     uint16_t ProcessorCount;
 
     //
     // Number of partitions currently being used.
     //
-    _Field_range_(>, 0)
+    _Field_range_( >, 0)
     uint16_t PartitionCount;
 
     //
@@ -254,12 +262,12 @@ extern QUIC_LIBRARY MsQuicLib;
 #endif
 
 _IRQL_requires_max_(DISPATCH_LEVEL)
-_Ret_range_(0,MsQuicLib.PartitionCount - 1)
+_Ret_range_(0, MsQuicLib.PartitionCount - 1)
 inline
 uint16_t
 QuicLibraryGetCurrentPartition(
     void
-    )
+)
 {
     return ((uint16_t)CxPlatProcCurrentNumber()) % MsQuicLib.PartitionCount;
 }
@@ -269,7 +277,7 @@ inline
 uint16_t
 QuicPartitionIdCreate(
     uint16_t BaseIndex
-    )
+)
 {
     CXPLAT_DBG_ASSERT(BaseIndex < MsQuicLib.PartitionCount);
     //
@@ -290,7 +298,7 @@ inline
 uint16_t
 QuicPartitionIdGetIndex(
     uint16_t PartitionId
-    )
+)
 {
     return (PartitionId & MsQuicLib.PartitionMask) % MsQuicLib.PartitionCount;
 }
@@ -301,7 +309,7 @@ uint16_t
 QuicPartitionIndexIncrement(
     uint16_t PartitionIndex,
     uint16_t Increment
-    )
+)
 {
     CXPLAT_DBG_ASSERT(Increment < MsQuicLib.PartitionCount);
     return (PartitionIndex + Increment) % MsQuicLib.PartitionCount;
@@ -313,12 +321,15 @@ uint16_t
 QuicPartitionIndexDecrement(
     uint16_t PartitionIndex,
     uint16_t Decrement
-    )
+)
 {
     CXPLAT_DBG_ASSERT(Decrement < MsQuicLib.PartitionCount);
-    if (PartitionIndex >= Decrement) {
+    if (PartitionIndex >= Decrement)
+    {
         return PartitionIndex - Decrement;
-    } else {
+    }
+    else
+    {
         return PartitionIndex + (MsQuicLib.PartitionCount - Decrement);
     }
 }
@@ -329,7 +340,7 @@ void
 QuicPerfCounterAdd(
     _In_ QUIC_PERFORMANCE_COUNTERS Type,
     _In_ int64_t Value
-    )
+)
 {
     CXPLAT_DBG_ASSERT(Type >= 0 && Type < QUIC_PERF_COUNTER_MAX);
     uint32_t ProcIndex = CxPlatProcCurrentNumber();
@@ -346,26 +357,28 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicPerfCounterSnapShot(
     _In_ uint64_t TimeDiffUs
-    );
+);
 
 _IRQL_requires_max_(DISPATCH_LEVEL)
 inline
 void
 QuicPerfCounterTrySnapShot(
     _In_ uint64_t TimeNow
-    )
+)
 {
     uint64_t TimeLast = MsQuicLib.PerfCounterSamplesTime;
     uint64_t TimeDiff = CxPlatTimeDiff64(TimeLast, TimeNow);
-    if (TimeDiff < S_TO_US(QUIC_PERF_SAMPLE_INTERVAL_S)) {
+    if (TimeDiff < S_TO_US(QUIC_PERF_SAMPLE_INTERVAL_S))
+    {
         return; // Not time to resample yet.
     }
 
     if ((int64_t)TimeLast !=
-        InterlockedCompareExchange64(
-            (int64_t*)&MsQuicLib.PerfCounterSamplesTime,
-            (int64_t)TimeNow,
-            (int64_t)TimeLast)) {
+            InterlockedCompareExchange64(
+                (int64_t*)&MsQuicLib.PerfCounterSamplesTime,
+                (int64_t)TimeNow,
+                (int64_t)TimeLast))
+    {
         return; // Someone else already is updating.
     }
 
@@ -378,16 +391,16 @@ QuicPerfCounterTrySnapShot(
 //
 inline
 _Success_(return != NULL)
-QUIC_CID_HASH_ENTRY*
+QUIC_CID_HASH_ENTRY *
 QuicCidNewRandomSource(
     _In_opt_ QUIC_CONNECTION* Connection,
     _In_reads_opt_(MsQuicLib.CidServerIdLength)
-        const void* ServerID,
+    const void* ServerID,
     _In_ uint16_t PartitionID,
     _In_ uint8_t PrefixLength,
     _In_reads_(PrefixLength)
-        const void* Prefix
-    )
+    const void* Prefix
+)
 {
     CXPLAT_DBG_ASSERT(MsQuicLib.CidTotalLength <= QUIC_MAX_CONNECTION_ID_LENGTH_V1);
     CXPLAT_DBG_ASSERT(MsQuicLib.CidTotalLength == MsQuicLib.CidServerIdLength + MSQUIC_CID_PID_LENGTH + MSQUIC_CID_PAYLOAD_LENGTH);
@@ -400,15 +413,19 @@ QuicCidNewRandomSource(
             MsQuicLib.CidTotalLength,
             QUIC_POOL_CIDHASH);
 
-    if (Entry != NULL) {
+    if (Entry != NULL)
+    {
         Entry->Connection = Connection;
         CxPlatZeroMemory(&Entry->CID, sizeof(Entry->CID));
         Entry->CID.Length = MsQuicLib.CidTotalLength;
 
         uint8_t* Data = Entry->CID.Data;
-        if (ServerID != NULL) {
+        if (ServerID != NULL)
+        {
             CxPlatCopyMemory(Data, ServerID, MsQuicLib.CidServerIdLength);
-        } else {
+        }
+        else
+        {
             CxPlatRandom(MsQuicLib.CidServerIdLength, Data);
         }
         Data += MsQuicLib.CidServerIdLength;
@@ -417,7 +434,8 @@ QuicCidNewRandomSource(
         CxPlatCopyMemory(Data, &PartitionID, sizeof(PartitionID));
         Data += sizeof(PartitionID);
 
-        if (PrefixLength) {
+        if (PrefixLength)
+        {
             CxPlatCopyMemory(Data, Prefix, PrefixLength);
             Data += PrefixLength;
         }
@@ -434,8 +452,8 @@ QuicLibrarySetGlobalParam(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 QUIC_STATUS
@@ -443,8 +461,8 @@ QuicLibraryGetGlobalParam(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 QUIC_STATUS
@@ -454,8 +472,8 @@ QuicLibrarySetParam(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 QUIC_STATUS
@@ -465,8 +483,8 @@ QuicLibraryGetParam(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);
 
 //
 // Get the binding for the addresses.
@@ -482,7 +500,7 @@ QuicLibraryGetBinding(
     _In_opt_ const QUIC_ADDR* LocalAddress,
     _In_opt_ const QUIC_ADDR* RemoteAddress,
     _Out_ QUIC_BINDING** NewBinding
-    );
+);
 
 //
 // Tries to acquire a ref on the binding. Fails if already starting the clean up
@@ -492,7 +510,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 BOOLEAN
 QuicLibraryTryAddRefBinding(
     _In_ QUIC_BINDING* Binding
-    );
+);
 
 //
 // Releases a reference on the binding and uninitializes it if it's the last
@@ -503,7 +521,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 QuicLibraryReleaseBinding(
     _In_ QUIC_BINDING* Binding
-    );
+);
 
 //
 // Called when a listener is created. Makes sure the library is ready to handle
@@ -513,7 +531,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 BOOLEAN
 QuicLibraryOnListenerRegistered(
     _In_ QUIC_LISTENER* Listener
-    );
+);
 
 //
 // Returns the next available worker. Note, the worker may be overloaded.
@@ -522,7 +540,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 QUIC_WORKER*
 QuicLibraryGetWorker(
     _In_ const _In_ CXPLAT_RECV_DATA* Datagram
-    );
+);
 
 //
 // Returns the current stateless retry key.
@@ -532,7 +550,7 @@ _Ret_maybenull_
 CXPLAT_KEY*
 QuicLibraryGetCurrentStatelessRetryKey(
     void
-    );
+);
 
 //
 // Returns the stateless retry key for that timestamp.
@@ -542,7 +560,7 @@ _Ret_maybenull_
 CXPLAT_KEY*
 QuicLibraryGetStatelessRetryKeyForTimestamp(
     _In_ int64_t Timestamp
-    );
+);
 
 //
 // Called when a new (server) connection is added in the handshake state.
@@ -551,7 +569,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicLibraryOnHandshakeConnectionAdded(
     void
-    );
+);
 
 //
 // Called when a connection leaves the handshake state.
@@ -560,4 +578,4 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicLibraryOnHandshakeConnectionRemoved(
     void
-    );
+);

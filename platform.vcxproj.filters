@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d05d2f8e-53f3-467e-834c-2f4f7bc98c6d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\platform\cert_capi_openssl.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\datapath_epoll.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\platform_posix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\selfsign_openssl.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\storage_posix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\tls_openssl.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\toeplitz.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

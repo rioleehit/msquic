@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -8,9 +8,11 @@
 //
 // Represents the Listener specific state.
 //
-typedef struct QUIC_LISTENER {
+typedef struct QUIC_LISTENER
+{
 
-    struct QUIC_HANDLE;
+    //struct QUIC_HANDLE;
+    STRUCT_QUIC_HANDLE;
 
     //
     // Indicates the listener is listening on a wildcard address (v4/v6/both).
@@ -95,7 +97,7 @@ _IRQL_requires_max_(DISPATCH_LEVEL)
 void
 QuicListenerTraceRundown(
     _In_ QUIC_LISTENER* Listener
-    );
+);
 
 //
 // Returns TRUE if the two listeners have an overlapping ALPN.
@@ -105,7 +107,7 @@ BOOLEAN
 QuicListenerHasAlpnOverlap(
     _In_ const QUIC_LISTENER* Listener1,
     _In_ const QUIC_LISTENER* Listener2
-    );
+);
 
 //
 // Returns TRUE if the listener has a matching ALPN. Also updates the new
@@ -116,7 +118,7 @@ BOOLEAN
 QuicListenerMatchesAlpn(
     _In_ const QUIC_LISTENER* Listener,
     _In_ QUIC_NEW_CONNECTION_INFO* Info
-    );
+);
 
 //
 // Passes the connection to the listener to (possibly) accept it.
@@ -127,7 +129,7 @@ QuicListenerAcceptConnection(
     _In_ QUIC_LISTENER* Listener,
     _In_ QUIC_CONNECTION* Connection,
     _In_ const QUIC_NEW_CONNECTION_INFO* Info
-    );
+);
 
 //
 // Sets a Listener parameter.
@@ -139,8 +141,8 @@ QuicListenerParamSet(
     _In_ uint32_t Param,
     _In_ uint32_t BufferLength,
     _In_reads_bytes_(BufferLength)
-        const void* Buffer
-    );
+    const void* Buffer
+);
 
 //
 // Gets a Listener parameter.
@@ -152,5 +154,5 @@ QuicListenerParamGet(
     _In_ uint32_t Param,
     _Inout_ uint32_t* BufferLength,
     _Out_writes_bytes_opt_(*BufferLength)
-        void* Buffer
-    );
+    void* Buffer
+);
