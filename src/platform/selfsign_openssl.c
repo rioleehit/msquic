@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -35,22 +35,23 @@ Abstract:
 //
 QUIC_STATUS
 CxPlatTlsGenerateSelfSignedCert(
-    _In_z_ char *CertFileName,
-    _In_z_ char *PrivateKeyFileName,
-    _In_z_ char *SNI
-    )
+    _In_z_ char* CertFileName,
+    _In_z_ char* PrivateKeyFileName,
+    _In_z_ char* SNI
+)
 {
     QUIC_STATUS Status = QUIC_STATUS_SUCCESS;
     int Ret = 0;
-    EVP_PKEY *PKey = NULL;
-    EVP_PKEY_CTX * EcKeyCtx = NULL;
-    X509 *X509 = NULL;
-    X509_NAME *Name = NULL;
-    FILE *Fd = NULL;
+    EVP_PKEY* PKey = NULL;
+    EVP_PKEY_CTX* EcKeyCtx = NULL;
+    X509* X509 = NULL;
+    X509_NAME* Name = NULL;
+    FILE* Fd = NULL;
 
     PKey = EVP_PKEY_new();
 
-    if (PKey == NULL) {
+    if (PKey == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -60,7 +61,8 @@ CxPlatTlsGenerateSelfSignedCert(
     }
 
     EcKeyCtx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
-    if (EcKeyCtx == NULL) {
+    if (EcKeyCtx == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -70,7 +72,8 @@ CxPlatTlsGenerateSelfSignedCert(
     }
 
     Ret = EVP_PKEY_keygen_init(EcKeyCtx);
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -80,7 +83,8 @@ CxPlatTlsGenerateSelfSignedCert(
     }
 
     Ret = EVP_PKEY_keygen(EcKeyCtx, &PKey);
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -91,7 +95,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     X509 = X509_new();
 
-    if (X509 == NULL) {
+    if (X509 == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -102,7 +107,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Ret = ASN1_INTEGER_set(X509_get_serialNumber(X509), 1);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -123,12 +129,13 @@ CxPlatTlsGenerateSelfSignedCert(
             Name,
             "C",
             MBSTRING_ASC,
-            (unsigned char *)"CA",
+            (unsigned char*)"CA",
             -1,
             -1,
             0);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -142,12 +149,13 @@ CxPlatTlsGenerateSelfSignedCert(
             Name,
             "O",
             MBSTRING_ASC,
-            (unsigned char *)"Microsoft",
+            (unsigned char*)"Microsoft",
             -1,
             -1,
             0);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -161,12 +169,13 @@ CxPlatTlsGenerateSelfSignedCert(
             Name,
             "CN",
             MBSTRING_ASC,
-            (unsigned char *)SNI,
+            (unsigned char*)SNI,
             -1,
             -1,
             0);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -177,7 +186,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Ret = X509_set_issuer_name(X509, Name);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -188,7 +198,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Ret = X509_sign(X509, PKey, EVP_sha256());
 
-    if (Ret <= 0) {
+    if (Ret <= 0)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -199,7 +210,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Fd = fopen(PrivateKeyFileName, "wb");
 
-    if (Fd == NULL) {
+    if (Fd == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -210,7 +222,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Ret = PEM_write_PrivateKey(Fd, PKey, NULL, NULL, 0, NULL, NULL);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -224,7 +237,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Fd = fopen(CertFileName, "wb");
 
-    if (Fd == NULL) {
+    if (Fd == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -235,7 +249,8 @@ CxPlatTlsGenerateSelfSignedCert(
 
     Ret = PEM_write_X509(Fd, X509);
 
-    if (Ret != 1) {
+    if (Ret != 1)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -249,22 +264,26 @@ CxPlatTlsGenerateSelfSignedCert(
 
 Exit:
 
-    if (PKey != NULL) {
+    if (PKey != NULL)
+    {
         EVP_PKEY_free(PKey);
-        PKey= NULL;
+        PKey = NULL;
     }
 
-    if (EcKeyCtx != NULL) {
+    if (EcKeyCtx != NULL)
+    {
         EVP_PKEY_CTX_free(EcKeyCtx);
         EcKeyCtx = NULL;
     }
 
-    if (X509 != NULL) {
+    if (X509 != NULL)
+    {
         X509_free(X509);
         X509 = NULL;
     }
 
-    if (Fd != NULL) {
+    if (Fd != NULL)
+    {
         fclose(Fd);
         Fd = NULL;
     }
@@ -279,8 +298,10 @@ static char* QuicTestPrivateKeyFilename = (char*)"localhost_key.pem";
 #define MAX_PATH 50
 #endif
 
-typedef struct CXPLAT_CREDENTIAL_CONFIG_INTERNAL {
-    QUIC_CREDENTIAL_CONFIG;
+typedef struct CXPLAT_CREDENTIAL_CONFIG_INTERNAL
+{
+    //QUIC_CREDENTIAL_CONFIG;
+    STRUCT_QUIC_CREDENTIAL_CONFIG;
     QUIC_CERTIFICATE_FILE CertFile;
 #ifdef _WIN32
     char TempPath [MAX_PATH];
@@ -299,12 +320,13 @@ const QUIC_CREDENTIAL_CONFIG*
 CxPlatGetSelfSignedCert(
     _In_ CXPLAT_SELF_SIGN_CERT_TYPE Type,
     _In_ BOOLEAN ClientCertificate
-    )
+)
 {
     UNREFERENCED_PARAMETER(Type);
     UNREFERENCED_PARAMETER(ClientCertificate);
 
-    if (ClientCertificate) {
+    if (ClientCertificate)
+    {
         //
         // Client certificate is not supported on OpenSSL (yet)
         //
@@ -317,7 +339,8 @@ CxPlatGetSelfSignedCert(
 
     CXPLAT_CREDENTIAL_CONFIG_INTERNAL* Params =
         malloc(sizeof(CXPLAT_CREDENTIAL_CONFIG_INTERNAL) + sizeof(TEMP_DIR_TEMPLATE));
-    if (Params == NULL) {
+    if (Params == NULL)
+    {
         return NULL;
     }
 
@@ -330,7 +353,8 @@ CxPlatGetSelfSignedCert(
 #ifdef _WIN32
 
     DWORD PathStatus = GetTempPathA(sizeof(Params->TempPath), Params->TempPath);
-    if (PathStatus > MAX_PATH || PathStatus <= 0) {
+    if (PathStatus > MAX_PATH || PathStatus <= 0)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -344,7 +368,8 @@ CxPlatGetSelfSignedCert(
             "msquicopensslcert",
             0,
             Params->CertFilepath);
-    if (TempFileStatus == 0) {
+    if (TempFileStatus == 0)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -358,7 +383,8 @@ CxPlatGetSelfSignedCert(
             "msquicopensslkey",
             0,
             Params->PrivateKeyFilepath);
-    if (TempFileStatus == 0) {
+    if (TempFileStatus == 0)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -371,7 +397,8 @@ CxPlatGetSelfSignedCert(
     memcpy(Template, TEMP_DIR_TEMPLATE, sizeof(TEMP_DIR_TEMPLATE));
 
     Params->TempDir = mkdtemp(Template);
-    if (Params->TempDir == NULL) {
+    if (Params->TempDir == NULL)
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",
@@ -406,10 +433,11 @@ CxPlatGetSelfSignedCert(
 #endif
 
     if (QUIC_FAILED(
-        CxPlatTlsGenerateSelfSignedCert(
-            Params->CertFilepath,
-            Params->PrivateKeyFilepath,
-            (char *)"localhost"))) {
+                CxPlatTlsGenerateSelfSignedCert(
+                    Params->CertFilepath,
+                    Params->PrivateKeyFilepath,
+                    (char*)"localhost")))
+    {
         goto Error;
     }
 
@@ -435,14 +463,14 @@ CxPlatGetTestCertificate(
     _Out_ QUIC_CREDENTIAL_CONFIG* Params,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH, _Out_)
     _When_(CredType != QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH, _Reserved_)
-        QUIC_CERTIFICATE_HASH* CertHash,
+    QUIC_CERTIFICATE_HASH* CertHash,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH_STORE, _Out_)
     _When_(CredType != QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH_STORE, _Reserved_)
-        QUIC_CERTIFICATE_HASH_STORE* CertHashStore,
+    QUIC_CERTIFICATE_HASH_STORE* CertHashStore,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_NONE, _Out_z_bytecap_(100))
     _When_(CredType != QUIC_CREDENTIAL_TYPE_NONE, _Reserved_)
-        char Principal[100]
-    )
+    char Principal[100]
+)
 {
     // Not yet supported
     UNREFERENCED_PARAMETER(Type);
@@ -459,7 +487,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 CxPlatFreeTestCert(
     _In_ QUIC_CREDENTIAL_CONFIG* Params
-    )
+)
 {
     UNREFERENCED_PARAMETER(Params);
 }
@@ -468,7 +496,7 @@ _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 CxPlatFreeSelfSignedCert(
     _In_ const QUIC_CREDENTIAL_CONFIG* CredConfig
-    )
+)
 {
     CXPLAT_CREDENTIAL_CONFIG_INTERNAL* Params =
         (CXPLAT_CREDENTIAL_CONFIG_INTERNAL*)CredConfig;
@@ -480,7 +508,8 @@ CxPlatFreeSelfSignedCert(
     char RmCmd[32] = {0};
     strncpy(RmCmd, "rm -rf ", 7 + 1);
     strncat(RmCmd, Params->TempDir, sizeof(RmCmd) - strlen(RmCmd) - 1);
-    if (system(RmCmd) == -1) { // NOLINT cert-env33-c
+    if (system(RmCmd) == -1)   // NOLINT cert-env33-c
+    {
         QuicTraceEvent(
             LibraryError,
             "[ lib] ERROR, %s.",

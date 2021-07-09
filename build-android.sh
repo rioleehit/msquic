@@ -31,11 +31,11 @@ ANDROID_API=21
 
 # Set the target architecture
 # Can be android-arm, android-arm64, android-x86, android-x86 etc
-architecture=android-arm
+architecture=android-x86_64
 
 # ./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API --prefix=$OPENSSL_PREFIX enable-tls1_3
 # ./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API -DOPENSSL_NO_STDIO enable-tls1_3 no-makedepend no-dgram no-ssl3 no-psk no-srp no-autoerrinit no-filenames no-ui-console no-err no-zlib no-egd no-uplink no-idea no-rc5 no-rc4 no-afalgeng no-acvp_tests no-comp no-cmp no-cms no-ct no-srp no-srtp no-ts no-fips no-gost no-padlockeng no-dso no-ec2m no-tls1 no-tls1_1 no-tls1_2 no-dtls no-dtls1 no-dtls1_2 no-ssl no-ssl3-method no-tls1-method no-tls1_1-method no-tls1_2-method no-dtls1-method no-dtls1_2-method no-siv no-siphash no-whirlpool no-aria no-bf no-blake2 no-sm2 no-sm3 no-sm4 no-camellia no-cast no-des no-md4 no-mdc2 no-ocb no-rc2 no-rmd160 no-scrypt no-weak-ssl-ciphers no-shared no-tests -DL_ENDIAN --prefix=$(pwd)/android-arm
-./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API -DOPENSSL_NO_STDIO enable-tls1_3 no-makedepend no-dgram no-ssl3 no-psk no-srp no-autoerrinit no-filenames no-ui-console no-err no-zlib no-egd no-idea no-rc5 no-rc4 no-afalgeng no-comp no-cms no-ct no-srp no-srtp no-ts no-gost no-dso no-ec2m no-tls1 no-tls1_1 no-tls1_2 no-dtls no-dtls1 no-dtls1_2 no-ssl no-ssl3-method no-tls1-method no-tls1_1-method no-tls1_2-method no-dtls1-method no-dtls1_2-method no-siphash no-whirlpool no-aria no-bf no-blake2 no-sm2 no-sm3 no-sm4 no-camellia no-cast no-des no-md4 no-mdc2 no-ocb no-rc2 no-rmd160 no-scrypt no-weak-ssl-ciphers no-shared no-tests -DL_ENDIAN
+./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API -DOPENSSL_NO_STDIO enable-tls1_3 no-makedepend no-dgram no-ssl3 no-psk no-srp no-autoerrinit no-filenames no-ui-console no-err no-zlib no-egd no-idea no-rc5 no-rc4 no-afalgeng no-comp no-cms no-ct no-srp no-srtp no-ts no-gost no-dso no-ec2m no-tls1 no-tls1_1 no-tls1_2 no-dtls no-dtls1 no-dtls1_2 no-ssl no-ssl3-method no-tls1-method no-tls1_1-method no-tls1_2-method no-dtls1-method no-dtls1_2-method no-siphash no-whirlpool no-aria no-bf no-blake2 no-sm2 no-sm3 no-sm4 no-camellia no-cast no-des no-md4 no-mdc2 no-ocb no-rc2 no-rmd160 no-scrypt no-weak-ssl-ciphers no-shared no-tests -DL_ENDIAN -DL_ENDIAN --prefix=$OPENSSL_PREFIX
 # --prefix=$OPENSSL_PREFIX
 #  --prefix=$(pwd)/android-arm
 # -DOPENSSL_NO_STDIO enable-tls1_3 no-makedepend no-dgram no-ssl3 no-psk no-srp no-autoerrinit no-filenames no-ui-console no-err no-zlib no-egd no-idea no-rc5 no-rc4 no-afalgeng no-comp no-cms no-ct no-srp no-srtp no-ts no-gost no-dso no-ec2m no-tls1 no-tls1_1 no-tls1_2 no-dtls no-dtls1 no-dtls1_2 no-ssl no-ssl3-method no-tls1-method no-tls1_1-method no-tls1_2-method no-dtls1-method no-dtls1_2-method no-siphash no-whirlpool no-aria no-bf no-blake2 no-sm2 no-sm3 no-sm4 no-camellia no-cast no-des no-md4 no-mdc2 no-ocb no-rc2 no-rmd160 no-scrypt no-weak-ssl-ciphers no-shared no-tests -DL_ENDIAN 
@@ -48,7 +48,7 @@ OUTPUT_LIB=$SCRIPTPATH/output/lib/${architecture}
 mkdir -p $OUTPUT_INCLUDE
 mkdir -p $OUTPUT_LIB
 cp -RL include/openssl $OUTPUT_INCLUDE
-cp libcrypto.so $OUTPUT_LIB
+# cp libcrypto.so $OUTPUT_LIB
 cp libcrypto.a $OUTPUT_LIB
-cp libssl.so $OUTPUT_LIB
+# cp libssl.so $OUTPUT_LIB
 cp libssl.a $OUTPUT_LIB

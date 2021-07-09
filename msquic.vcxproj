@@ -54,7 +54,7 @@
     <PlatformToolset>Clang_5_0</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
     <AndroidAPILevel>android-21</AndroidAPILevel>
@@ -103,6 +103,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>$(SolutionDir)src\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
   </PropertyGroup>
@@ -146,8 +147,15 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CX_PLATFORM_LINUX;_GNU_SOURCE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CLanguageStandard>gnu11</CLanguageStandard>
+      <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
+      <CppLanguageStandard>Default</CppLanguageStandard>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>libcrypto.a;libssl.a</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\pre-build\lib\android-arm\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
@@ -156,19 +164,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="msquic.cpp" />
+    <ClCompile Include="src\bin\linux\init.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="msquic.h" />
     <ClInclude Include="pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="core.vcxproj">
-      <Project>{46abc624-58a2-452b-862d-2404ee31a495}</Project>
-    </ProjectReference>
-    <ProjectReference Include="platform.vcxproj">
-      <Project>{c07de593-d0a1-4398-8ef7-5a3da33e530d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

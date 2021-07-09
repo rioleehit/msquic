@@ -146,8 +146,8 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <CompileAs>CompileAsC</CompileAs>
-      <CLanguageStandard>c11</CLanguageStandard>
+      <CompileAs>Default</CompileAs>
+      <CLanguageStandard>gnu11</CLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PreprocessorDefinitions>CX_PLATFORM_LINUX;QUIC_EVENTS_STUB;QUIC_LOGS_STUB;%(PreprocessorDefinitions)</PreprocessorDefinitions>

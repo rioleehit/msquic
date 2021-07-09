@@ -1,14 +1,15 @@
 ﻿#include "msquic.h"
 
-#include "quic_platform.h"
-#ifdef QUIC_CLOG
-#include "quic_trace.h"
-#endif
-
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "msquic", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "msquic", __VA_ARGS__))
 
 extern "C" {
+    //
+    //#include "quic_platform.h"
+    //#ifdef QUIC_CLOG
+    //#include "quic_trace.h"
+    //#endif
+
     /*此简单函数返回平台 ABI，此动态本地库为此平台 ABI 进行编译。*/
     const char* msquic::getPlatformABI()
     {
@@ -44,15 +45,15 @@ extern "C" {
     }
 
 
-    void
-    MsQuicLibraryLoad(
-        void
-    );
+    //void
+    //MsQuicLibraryLoad(
+    //    void
+    //);
 
-    void
-    MsQuicLibraryUnload(
-        void
-    );
+    //void
+    //MsQuicLibraryUnload(
+    //    void
+    //);
 
     //    BOOL
     //    __stdcall
