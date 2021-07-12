@@ -15,9 +15,6 @@
     <ClCompile Include="src\platform\datapath_epoll.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\platform_posix.c">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\platform\selfsign_openssl.c">
       <Filter>src</Filter>
     </ClCompile>
@@ -28,6 +25,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\toeplitz.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\platform_android.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\platform_android_ex.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

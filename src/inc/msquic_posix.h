@@ -348,7 +348,7 @@ QuicAddrIncrement(
     }
 }
 
-//inline
+inline
 void
 QuicAddrSetToLoopback(
     _Inout_ QUIC_ADDR* Addr

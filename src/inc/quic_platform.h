@@ -1,4 +1,4 @@
-/*++
+﻿/*++
 
     Copyright (c) Microsoft Corporation.
     Licensed under the MIT License.
@@ -39,12 +39,14 @@ Supported Environments:
 #define CXPLAT_CONTAINING_RECORD(address, type, field) \
     ((type *)((uint8_t*)(address) - offsetof(type, field)))
 
-typedef struct CXPLAT_LIST_ENTRY {
+typedef struct CXPLAT_LIST_ENTRY
+{
     struct CXPLAT_LIST_ENTRY* Flink;
     struct CXPLAT_LIST_ENTRY* Blink;
 } CXPLAT_LIST_ENTRY;
 
-typedef struct CXPLAT_SLIST_ENTRY {
+typedef struct CXPLAT_SLIST_ENTRY
+{
     struct CXPLAT_SLIST_ENTRY* Next;
 } CXPLAT_SLIST_ENTRY;
 
@@ -135,7 +137,8 @@ typedef struct CXPLAT_SLIST_ENTRY {
 #define QUIC_POOL_TLS_TICKET_KEY            '74cQ' // Qc47 - QUIC Platform TLS ticket key
 #define QUIC_POOL_TLS_CIPHER_SUITE_STRING   '84cQ' // Qc48 - QUIC TLS cipher suite string
 
-typedef enum CXPLAT_THREAD_FLAGS {
+typedef enum CXPLAT_THREAD_FLAGS
+{
     CXPLAT_THREAD_FLAG_NONE               = 0x0000,
     CXPLAT_THREAD_FLAG_SET_IDEAL_PROC     = 0x0001,
     CXPLAT_THREAD_FLAG_SET_AFFINITIZE     = 0x0002,
@@ -152,6 +155,11 @@ DEFINE_ENUM_FLAG_OPERATORS(CXPLAT_THREAD_FLAGS);
 #elif _WIN32
 #define CX_PLATFORM_TYPE 2
 #include <quic_platform_winuser.h>
+#elif __ANDROID__ || CX_PLATFORM_ANDROID
+#define CX_PLATFORM_ANDROID
+#define CX_PLATFORM_TYPE 5
+#define CX_PLATFORM_USES_TLS_BUILTIN_CERTIFICATE 1
+#include "quic_platform_android.h"
 #elif CX_PLATFORM_LINUX
 #define CX_PLATFORM_TYPE 3
 #define CX_PLATFORM_USES_TLS_BUILTIN_CERTIFICATE 1
@@ -174,7 +182,7 @@ FORCEINLINE
 void
 CxPlatListInitializeHead(
     _Out_ CXPLAT_LIST_ENTRY* ListHead
-    )
+)
 {
     ListHead->Flink = ListHead->Blink = ListHead;
 }
@@ -184,7 +192,7 @@ FORCEINLINE
 BOOLEAN
 CxPlatListIsEmpty(
     _In_ const CXPLAT_LIST_ENTRY* ListHead
-    )
+)
 {
     return (BOOLEAN)(ListHead->Flink == ListHead);
 }
@@ -194,7 +202,7 @@ void
 CxPlatListInsertHead(
     _Inout_ CXPLAT_LIST_ENTRY* ListHead,
     _Out_ __drv_aliasesMem CXPLAT_LIST_ENTRY* Entry
-    )
+)
 {
     QuicListEntryValidate(ListHead);
     CXPLAT_LIST_ENTRY* Flink = ListHead->Flink;
@@ -209,7 +217,7 @@ void
 CxPlatListInsertTail(
     _Inout_ CXPLAT_LIST_ENTRY* ListHead,
     _Inout_ __drv_aliasesMem CXPLAT_LIST_ENTRY* Entry
-    )
+)
 {
     QuicListEntryValidate(ListHead);
     CXPLAT_LIST_ENTRY* Blink = ListHead->Blink;
@@ -223,7 +231,7 @@ FORCEINLINE
 CXPLAT_LIST_ENTRY*
 CxPlatListRemoveHead(
     _Inout_ CXPLAT_LIST_ENTRY* ListHead
-    )
+)
 {
     QuicListEntryValidate(ListHead);
     CXPLAT_LIST_ENTRY* Entry = ListHead->Flink; // cppcheck-suppress shadowFunction
@@ -237,7 +245,7 @@ FORCEINLINE
 BOOLEAN
 CxPlatListEntryRemove(
     _In_ CXPLAT_LIST_ENTRY* Entry
-    )
+)
 {
     QuicListEntryValidate(Entry);
     CXPLAT_LIST_ENTRY* Flink = Entry->Flink;
@@ -252,14 +260,16 @@ void
 CxPlatListMoveItems(
     _Inout_ CXPLAT_LIST_ENTRY* Source,
     _Inout_ CXPLAT_LIST_ENTRY* Destination
-    )
+)
 {
     //
     // If there are items, copy them.
     //
-    if (!CxPlatListIsEmpty(Source)) {
+    if (!CxPlatListIsEmpty(Source))
+    {
 
-        if (CxPlatListIsEmpty(Destination)) {
+        if (CxPlatListIsEmpty(Destination))
+        {
 
             //
             // Copy the links of the Source.
@@ -273,7 +283,9 @@ CxPlatListMoveItems(
             Destination->Flink->Blink = Destination;
             Destination->Blink->Flink = Destination;
 
-        } else {
+        }
+        else
+        {
 
             //
             // Fix Destination's current last item to point
@@ -301,7 +313,7 @@ void
 CxPlatListPushEntry(
     _Inout_ CXPLAT_SLIST_ENTRY* ListHead,
     _Inout_ __drv_aliasesMem CXPLAT_SLIST_ENTRY* Entry
-    )
+)
 {
     Entry->Next = ListHead->Next;
     ListHead->Next = Entry;
@@ -311,10 +323,11 @@ FORCEINLINE
 CXPLAT_SLIST_ENTRY*
 CxPlatListPopEntry(
     _Inout_ CXPLAT_SLIST_ENTRY* ListHead
-    )
+)
 {
     CXPLAT_SLIST_ENTRY* FirstEntry = ListHead->Next;
-    if (FirstEntry != NULL) {
+    if (FirstEntry != NULL)
+    {
         ListHead->Next = FirstEntry->Next;
     }
     return FirstEntry;
@@ -337,12 +350,14 @@ typedef struct QUIC_CREDENTIAL_CONFIG QUIC_CREDENTIAL_CONFIG;
 typedef struct QUIC_CERTIFICATE_HASH QUIC_CERTIFICATE_HASH;
 typedef struct QUIC_CERTIFICATE_HASH_STORE QUIC_CERTIFICATE_HASH_STORE;
 
-typedef enum CXPLAT_SELF_SIGN_CERT_TYPE {
+typedef enum CXPLAT_SELF_SIGN_CERT_TYPE
+{
     CXPLAT_SELF_SIGN_CERT_USER,
     CXPLAT_SELF_SIGN_CERT_MACHINE
 } CXPLAT_SELF_SIGN_CERT_TYPE;
 
-typedef enum CXPLAT_TEST_CERT_TYPE {
+typedef enum CXPLAT_TEST_CERT_TYPE
+{
     CXPLAT_TEST_CERT_VALID_SERVER,
     CXPLAT_TEST_CERT_VALID_CLIENT,
     CXPLAT_TEST_CERT_EXPIRED_SERVER,
@@ -354,7 +369,7 @@ const QUIC_CREDENTIAL_CONFIG*
 CxPlatGetSelfSignedCert(
     _In_ CXPLAT_SELF_SIGN_CERT_TYPE Type,
     _In_ BOOLEAN ClientCertificate
-    );
+);
 
 _Success_(return == TRUE)
 BOOLEAN
@@ -365,26 +380,26 @@ CxPlatGetTestCertificate(
     _Out_ QUIC_CREDENTIAL_CONFIG* Params,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH, _Out_)
     _When_(CredType != QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH, _Reserved_)
-        QUIC_CERTIFICATE_HASH* CertHash,
+    QUIC_CERTIFICATE_HASH* CertHash,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH_STORE, _Out_)
     _When_(CredType != QUIC_CREDENTIAL_TYPE_CERTIFICATE_HASH_STORE, _Reserved_)
-        QUIC_CERTIFICATE_HASH_STORE* CertHashStore,
+    QUIC_CERTIFICATE_HASH_STORE* CertHashStore,
     _When_(CredType == QUIC_CREDENTIAL_TYPE_NONE, _Out_z_bytecap_(100))
     _When_(CredType != QUIC_CREDENTIAL_TYPE_NONE, _Reserved_)
-        char Principal[100]
-    );
+    char Principal[100]
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 CxPlatFreeSelfSignedCert(
     _In_ const QUIC_CREDENTIAL_CONFIG* CredConfig
-    );
+);
 
 _IRQL_requires_max_(PASSIVE_LEVEL)
 void
 CxPlatFreeTestCert(
     _In_ QUIC_CREDENTIAL_CONFIG* Params
-    );
+);
 
 #if defined(__cplusplus)
 }

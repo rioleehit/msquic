@@ -24,77 +24,11 @@ extern "C" {
  * OpenSSL was configured with the following options:
  */
 
-#ifndef OPENSSL_NO_ARIA
-# define OPENSSL_NO_ARIA
-#endif
-#ifndef OPENSSL_NO_BF
-# define OPENSSL_NO_BF
-#endif
-#ifndef OPENSSL_NO_BLAKE2
-# define OPENSSL_NO_BLAKE2
-#endif
-#ifndef OPENSSL_NO_CAMELLIA
-# define OPENSSL_NO_CAMELLIA
-#endif
-#ifndef OPENSSL_NO_CAST
-# define OPENSSL_NO_CAST
-#endif
-#ifndef OPENSSL_NO_CMS
-# define OPENSSL_NO_CMS
-#endif
-#ifndef OPENSSL_NO_COMP
-# define OPENSSL_NO_COMP
-#endif
-#ifndef OPENSSL_NO_CT
-# define OPENSSL_NO_CT
-#endif
-#ifndef OPENSSL_NO_DES
-# define OPENSSL_NO_DES
-#endif
-#ifndef OPENSSL_NO_IDEA
-# define OPENSSL_NO_IDEA
-#endif
 #ifndef OPENSSL_NO_MD2
 # define OPENSSL_NO_MD2
 #endif
-#ifndef OPENSSL_NO_MD4
-# define OPENSSL_NO_MD4
-#endif
-#ifndef OPENSSL_NO_MDC2
-# define OPENSSL_NO_MDC2
-#endif
-#ifndef OPENSSL_NO_RC2
-# define OPENSSL_NO_RC2
-#endif
-#ifndef OPENSSL_NO_RC4
-# define OPENSSL_NO_RC4
-#endif
 #ifndef OPENSSL_NO_RC5
 # define OPENSSL_NO_RC5
-#endif
-#ifndef OPENSSL_NO_RMD160
-# define OPENSSL_NO_RMD160
-#endif
-#ifndef OPENSSL_NO_SIPHASH
-# define OPENSSL_NO_SIPHASH
-#endif
-#ifndef OPENSSL_NO_SM2
-# define OPENSSL_NO_SM2
-#endif
-#ifndef OPENSSL_NO_SM3
-# define OPENSSL_NO_SM3
-#endif
-#ifndef OPENSSL_NO_SM4
-# define OPENSSL_NO_SM4
-#endif
-#ifndef OPENSSL_NO_SRP
-# define OPENSSL_NO_SRP
-#endif
-#ifndef OPENSSL_NO_TS
-# define OPENSSL_NO_TS
-#endif
-#ifndef OPENSSL_NO_WHIRLPOOL
-# define OPENSSL_NO_WHIRLPOOL
 #endif
 #ifndef OPENSSL_THREADS
 # define OPENSSL_THREADS
@@ -108,9 +42,6 @@ extern "C" {
 #ifndef OPENSSL_NO_ASAN
 # define OPENSSL_NO_ASAN
 #endif
-#ifndef OPENSSL_NO_AUTOERRINIT
-# define OPENSSL_NO_AUTOERRINIT
-#endif
 #ifndef OPENSSL_NO_CRYPTO_MDEBUG
 # define OPENSSL_NO_CRYPTO_MDEBUG
 #endif
@@ -120,44 +51,14 @@ extern "C" {
 #ifndef OPENSSL_NO_DEVCRYPTOENG
 # define OPENSSL_NO_DEVCRYPTOENG
 #endif
-#ifndef OPENSSL_NO_DGRAM
-# define OPENSSL_NO_DGRAM
-#endif
-#ifndef OPENSSL_NO_DSO
-# define OPENSSL_NO_DSO
-#endif
-#ifndef OPENSSL_NO_DTLS
-# define OPENSSL_NO_DTLS
-#endif
-#ifndef OPENSSL_NO_DTLS1
-# define OPENSSL_NO_DTLS1
-#endif
-#ifndef OPENSSL_NO_DTLS1_METHOD
-# define OPENSSL_NO_DTLS1_METHOD
-#endif
-#ifndef OPENSSL_NO_DTLS1_2
-# define OPENSSL_NO_DTLS1_2
-#endif
-#ifndef OPENSSL_NO_DTLS1_2_METHOD
-# define OPENSSL_NO_DTLS1_2_METHOD
-#endif
-#ifndef OPENSSL_NO_EC2M
-# define OPENSSL_NO_EC2M
-#endif
 #ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
 # define OPENSSL_NO_EC_NISTP_64_GCC_128
 #endif
 #ifndef OPENSSL_NO_EGD
 # define OPENSSL_NO_EGD
 #endif
-#ifndef OPENSSL_NO_ERR
-# define OPENSSL_NO_ERR
-#endif
 #ifndef OPENSSL_NO_EXTERNAL_TESTS
 # define OPENSSL_NO_EXTERNAL_TESTS
-#endif
-#ifndef OPENSSL_NO_FILENAMES
-# define OPENSSL_NO_FILENAMES
 #endif
 #ifndef OPENSSL_NO_FUZZ_AFL
 # define OPENSSL_NO_FUZZ_AFL
@@ -165,29 +66,14 @@ extern "C" {
 #ifndef OPENSSL_NO_FUZZ_LIBFUZZER
 # define OPENSSL_NO_FUZZ_LIBFUZZER
 #endif
-#ifndef OPENSSL_NO_GOST
-# define OPENSSL_NO_GOST
-#endif
 #ifndef OPENSSL_NO_HEARTBEATS
 # define OPENSSL_NO_HEARTBEATS
 #endif
 #ifndef OPENSSL_NO_MSAN
 # define OPENSSL_NO_MSAN
 #endif
-#ifndef OPENSSL_NO_OCB
-# define OPENSSL_NO_OCB
-#endif
-#ifndef OPENSSL_NO_PSK
-# define OPENSSL_NO_PSK
-#endif
-#ifndef OPENSSL_NO_SCRYPT
-# define OPENSSL_NO_SCRYPT
-#endif
 #ifndef OPENSSL_NO_SCTP
 # define OPENSSL_NO_SCTP
-#endif
-#ifndef OPENSSL_NO_SRTP
-# define OPENSSL_NO_SRTP
 #endif
 #ifndef OPENSSL_NO_SSL_TRACE
 # define OPENSSL_NO_SSL_TRACE
@@ -201,29 +87,8 @@ extern "C" {
 #ifndef OPENSSL_NO_TESTS
 # define OPENSSL_NO_TESTS
 #endif
-#ifndef OPENSSL_NO_TLS1
-# define OPENSSL_NO_TLS1
-#endif
-#ifndef OPENSSL_NO_TLS1_METHOD
-# define OPENSSL_NO_TLS1_METHOD
-#endif
-#ifndef OPENSSL_NO_TLS1_1
-# define OPENSSL_NO_TLS1_1
-#endif
-#ifndef OPENSSL_NO_TLS1_1_METHOD
-# define OPENSSL_NO_TLS1_1_METHOD
-#endif
-#ifndef OPENSSL_NO_TLS1_2
-# define OPENSSL_NO_TLS1_2
-#endif
-#ifndef OPENSSL_NO_TLS1_2_METHOD
-# define OPENSSL_NO_TLS1_2_METHOD
-#endif
 #ifndef OPENSSL_NO_UBSAN
 # define OPENSSL_NO_UBSAN
-#endif
-#ifndef OPENSSL_NO_UI_CONSOLE
-# define OPENSSL_NO_UI_CONSOLE
 #endif
 #ifndef OPENSSL_NO_UNIT_TEST
 # define OPENSSL_NO_UNIT_TEST
@@ -324,14 +189,14 @@ extern "C" {
  * The following are cipher-specific, but are part of the public API.
  */
 #if !defined(OPENSSL_SYS_UEFI)
-# undef BN_LLONG
+# define BN_LLONG
 /* Only one for the following should be defined */
-# define SIXTY_FOUR_BIT_LONG
+# undef SIXTY_FOUR_BIT_LONG
 # undef SIXTY_FOUR_BIT
-# undef THIRTY_TWO_BIT
+# define THIRTY_TWO_BIT
 #endif
 
-#define RC4_INT unsigned int
+#define RC4_INT unsigned char
 
 #ifdef  __cplusplus
 }

@@ -77,7 +77,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-21</AndroidAPILevel>
+    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -151,7 +151,7 @@
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <CompileAs>Default</CompileAs>
-      <PreprocessorDefinitions>CX_PLATFORM_LINUX;QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -166,7 +166,8 @@
   <ItemGroup>
     <ClCompile Include="src\platform\cert_capi_openssl.c" />
     <ClCompile Include="src\platform\datapath_epoll.c" />
-    <ClCompile Include="src\platform\platform_posix.c" />
+    <ClCompile Include="src\platform\platform_android.c" />
+    <ClCompile Include="src\platform\platform_android_ex.c" />
     <ClCompile Include="src\platform\selfsign_openssl.c" />
     <ClCompile Include="src\platform\storage_posix.c" />
     <ClCompile Include="src\platform\tls_openssl.c" />
