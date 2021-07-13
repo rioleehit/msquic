@@ -151,7 +151,7 @@
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <CompileAs>Default</CompileAs>
-      <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -166,8 +166,10 @@
   <ItemGroup>
     <ClCompile Include="src\platform\cert_capi_openssl.c" />
     <ClCompile Include="src\platform\datapath_epoll.c" />
-    <ClCompile Include="src\platform\platform_android.c" />
-    <ClCompile Include="src\platform\platform_android_ex.c" />
+    <ClCompile Include="src\platform\hashtable.c" />
+    <ClCompile Include="src\platform\inline.c" />
+    <ClCompile Include="src\platform\pcp.c" />
+    <ClCompile Include="src\platform\platform_posix.c" />
     <ClCompile Include="src\platform\selfsign_openssl.c" />
     <ClCompile Include="src\platform\storage_posix.c" />
     <ClCompile Include="src\platform\tls_openssl.c" />

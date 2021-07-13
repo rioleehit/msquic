@@ -155,12 +155,7 @@ DEFINE_ENUM_FLAG_OPERATORS(CXPLAT_THREAD_FLAGS);
 #elif _WIN32
 #define CX_PLATFORM_TYPE 2
 #include <quic_platform_winuser.h>
-#elif __ANDROID__ || CX_PLATFORM_ANDROID
-#define CX_PLATFORM_ANDROID
-#define CX_PLATFORM_TYPE 5
-#define CX_PLATFORM_USES_TLS_BUILTIN_CERTIFICATE 1
-#include "quic_platform_android.h"
-#elif CX_PLATFORM_LINUX
+#elif defined(__ANDROID__) || defined(CX_PLATFORM_LINUX)
 #define CX_PLATFORM_TYPE 3
 #define CX_PLATFORM_USES_TLS_BUILTIN_CERTIFICATE 1
 #include <quic_platform_posix.h>

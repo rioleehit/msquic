@@ -147,14 +147,15 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>_GNU_SOURCE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CLanguageStandard>gnu11</CLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <CppLanguageStandard>Default</CppLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>-lssl;-lcrypto</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\pre-build\lib\android-arm\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>-lcore;-lplatform;-lssl;-lcrypto</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\pre-build\lib\android-arm;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -168,14 +169,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="core.vcxproj">
-      <Project>{46abc624-58a2-452b-862d-2404ee31a495}</Project>
-    </ProjectReference>
-    <ProjectReference Include="platform.vcxproj">
-      <Project>{c07de593-d0a1-4398-8ef7-5a3da33e530d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

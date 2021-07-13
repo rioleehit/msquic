@@ -27,10 +27,16 @@
     <ClCompile Include="src\platform\toeplitz.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\platform_android.c">
+    <ClCompile Include="src\platform\inline.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\platform_android_ex.c">
+    <ClCompile Include="src\platform\hashtable.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\pcp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\platform_posix.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
