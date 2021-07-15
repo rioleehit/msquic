@@ -35,7 +35,7 @@ ANDROID_API=23
 
 # Set the target architecture
 # Can be android-arm, android-arm64, android-x86, android-x86_64 etc
-architecture=android-x86_64
+architecture=android-arm
 
 # ./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API --prefix=$OPENSSL_PREFIX enable-tls1_3
 # ./Configure ${architecture} -D__ANDROID_API__=$ANDROID_API -DOPENSSL_NO_STDIO enable-tls1_3 no-makedepend no-dgram no-ssl3 no-psk no-srp no-autoerrinit no-filenames no-ui-console no-err no-zlib no-egd no-uplink no-idea no-rc5 no-rc4 no-afalgeng no-acvp_tests no-comp no-cmp no-cms no-ct no-srp no-srtp no-ts no-fips no-gost no-padlockeng no-dso no-ec2m no-tls1 no-tls1_1 no-tls1_2 no-dtls no-dtls1 no-dtls1_2 no-ssl no-ssl3-method no-tls1-method no-tls1_1-method no-tls1_2-method no-dtls1-method no-dtls1_2-method no-siv no-siphash no-whirlpool no-aria no-bf no-blake2 no-sm2 no-sm3 no-sm4 no-camellia no-cast no-des no-md4 no-mdc2 no-ocb no-rc2 no-rmd160 no-scrypt no-weak-ssl-ciphers no-shared no-tests -DL_ENDIAN --prefix=$(pwd)/android-arm

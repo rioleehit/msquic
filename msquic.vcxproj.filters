@@ -4,6 +4,6 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\bin\linux\init.c" />
+    <ClCompile Include="src\bin\linux\init.cpp" />
   </ItemGroup>
 </Project>

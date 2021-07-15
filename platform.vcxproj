@@ -94,42 +94,81 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared" />
-  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="props\EnvDebug.props" />
+    <Import Project="props\EnvArm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <Import Project="props\EnvDebug.props" />
+    <Import Project="props\EnvArm64.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="props\EnvDebug.props" />
+    <Import Project="props\EnvX86_64.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <Import Project="props\EnvDebug.props" />
+    <Import Project="props\EnvX86.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="props\EnvRelease.props" />
+    <Import Project="props\EnvArm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <Import Project="props\EnvRelease.props" />
+    <Import Project="props\EnvArm64.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="props\EnvRelease.props" />
+    <Import Project="props\EnvX86_64.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <Import Project="props\EnvRelease.props" />
+    <Import Project="props\EnvX86.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>$(SolutionDir)src\inc;$(SolutionDir)pre-build\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)pre-build\lib\android-arm\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <OutDir>$(SolutionDir)msquic-1.3.0\$(ARCH_NAME)-$(EnvConfig)</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-x86_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-x86_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
@@ -138,20 +177,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-x86\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-x86\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
@@ -160,20 +199,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-arm64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-arm64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
@@ -182,21 +221,21 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsC</CompileAs>
       <PreprocessorDefinitions>QUIC_EVENTS_STUB;QUIC_LOGS_STUB;_GNU_SOURCE;CX_PLATFORM_LINUX;_GNU_SOURCE;CX_PLATFORM_LINUX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-arm\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\android-arm\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\inc;$(SolutionDir)pre-build\$(ARCH_NAME)\include</AdditionalIncludeDirectories>
       <CLanguageStandard>c11</CLanguageStandard>
       <CppLanguageStandard>Default</CppLanguageStandard>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>

@@ -50,8 +50,11 @@ quic_bugcheck(
     // it is possible certain optimizations will cause inlining. asm technique
     // is the gcc documented way to prevent such optimizations.
     //
+#if __ANDROID__
+    __asm__ __volatile__("");
+#else
     asm("");
-
+#endif
     //
     // abort() sends a SIGABRT signal and it triggers termination and coredump.
     //
